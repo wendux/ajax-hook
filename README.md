@@ -1,6 +1,6 @@
 # Ajax-hook
 
-[![npm version](https://img.shields.io/npm/v/ajax-hook.svg)](https://www.npmjs.org/package/ajax-hook) [![build status](https://travis-ci.org/wendux/Ajax-hook.svg?branch=master)](https://travis-ci.org/wendux/Ajax-hook) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit-license.php) ![](https://img.shields.io/badge/typeScript-support-orange.svg)  ![](https://img.shields.io/badge/support-%3E%3Des5-orange.svg)
+[![npm version](https://img.shields.io/npm/v/ajax-hook.svg)](https://www.npmjs.org/package/ajax-hook) [![build status](https://travis-ci.org/wendux/Ajax-hook.svg?branch=master)](https://travis-ci.org/wendux/Ajax-hook) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit-license.php) ![](https://img.shields.io/badge/typeScript-support-orange.svg)  ![](https://img.shields.io/badge/support-%3E%3Des5-orange.svg) ![](https://img.shields.io/github/size/wendux/Ajax-hook/dist/ajaxhook.min.js.svg)
 
 
 
