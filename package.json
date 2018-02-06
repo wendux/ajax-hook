@@ -1,6 +1,8 @@
 {
   "name": "ajax-hooks",
-  "version": "1.0.0",
+  "version": "1.8.0",
+  "main":"index.js",
+  "typings":"./index.d.ts",
   "author": {
     "name": "wendux",
     "email": "824783146@qq.com",
@@ -24,7 +26,6 @@
     "build": "webpack"
   },
   "devDependencies": {
-    "ajax-hook": "^1.0.0",
     "webpack": "^1.13.2"
   }
 }

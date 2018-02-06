@@ -1,9 +1,4 @@
-/**
- * Created by du on 16/12/10.
- */
-
-const ah=require("../index")
-
+import ah from "../index"
 ah.hookAjax({
     onreadystatechange:function(xhr){
         console.log("onreadystatechange called: %O",xhr)
@@ -28,15 +23,4 @@ ah.hookAjax({
     setRequestHeader:function(arg,xhr){
         console.log("setRequestHeader called!",arg)
     }
-})
-
-$.get().done(function(d){
-    console.log(d.substr(0,30)+"...")
-    //use original XMLHttpRequest
-    console.log("unhook")
-    ah.unHookAjax()
-    $.get().done(function(d){
-        console.log(d.substr(0,10))
-    })
-
 })

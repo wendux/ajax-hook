@@ -6,7 +6,8 @@ var fs = require("fs");
 var webpack = require('webpack');
 module.exports = {
     entry: {
-        "wendu.ajaxhook": "./src/ajaxhook.js",
+        // "ajaxhook": "./src/ajaxhook.js",
+        "ajaxhook": "./dist.js",
         "test" :["./demon/test.js"]
     },
     output: {

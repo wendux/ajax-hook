@@ -1,42 +1,58 @@
 # Ajax-hook
 
-key words: ajax hook, hook ajax,  XMLHttpRequest hook, hook XMLHttpRequest.
+[![npm version](https://img.shields.io/npm/v/ajax-hook.svg)](https://www.npmjs.org/package/ajax-hook) [![build status](https://travis-ci.org/wendux/Ajax-hook.svg?branch=master)](https://travis-ci.org/wendux/Ajax-hook) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit-license.php) ![](https://img.shields.io/badge/typeScript-support-orange.svg)  ![](https://img.shields.io/badge/support-%3E%3Des5-orange.svg)
+
+
+
+![image](https://github.com/wendux/Ajax-hook/raw/master/ajaxhook.png)
 
 中文文档:[http://www.jianshu.com/p/9b634f1c9615](http://www.jianshu.com/p/9b634f1c9615)
+
 原理解析:[http://www.jianshu.com/p/7337ac624b8e](http://www.jianshu.com/p/7337ac624b8e)
-## Description
 
-Hook Javascript global XMLHttpRequest  object。 And change the  default AJAX   request and response .
+## Introduction
 
-## How to use
+Hook Javascript global XMLHttpRequest  object。 And change the  default  Ajax  request and response .
 
-### **Using by script tag**
+## Usage
 
-1. include the script file "ajaxhook.js"
+1. Installing
 
-   ```html
-   <script src="ajaxhook.js"></script>
-   ```
+   - Using cdn 
+
+     ```html
+     <script src="https://unpkg.com/ajax-hook/dist/ajaxhook.min.js"></script>
+     ```
+
+   - Using npm
+
+     ```shell
+     npm install ajax-hook
+     ```
 
 2. hook the callbacks and functions you want .
 
    ```javascript
    hookAjax({
-       //hook callbacks
-       onreadystatechange:function(xhr){
-           console.log("onreadystatechange called: %O",xhr)
-       },
-       onload:function(xhr){
-           console.log("onload called: %O",xhr)
-       },
-       //hook function
-       open:function(arg,xhr){
-        console.log("open called: method:%s,url:%s,async:%s",arg[0],arg[1],arg[2])
-       }
+     //hook callbacks
+     onreadystatechange:function(xhr){
+       console.log("onreadystatechange called: %O",xhr)
+     },
+     onload:function(xhr){
+       console.log("onload called: %O",xhr)
+     },
+     //hook function
+     open:function(arg,xhr){
+       console.log("open called: method:%s,url:%s,async:%s",arg[0],arg[1],arg[2])
+     }
    })
+
+   // NPM
+   // const ah=require("ajax-hook")
+   // ah.hookAjax({...})
    ```
 
- Now, it worked! we use jQuery ajax  to test .
+Now, it worked! we use jQuery ajax  to test .
 
 ```javascript
 // get current page source code 
@@ -56,31 +72,6 @@ The result :
 ```
 
 **See the demo "demo.html" for more details.**
-
-### Using in commonJs module build environment
-
-Suppose you are using webpack as your  module bundler, firstly Install ajax-hook plugin:
-
-```javascript
-npm install ajax-hook --save-dev
-```
-And then require the ajax-hook module:
-```javascript
-const ah=require("ajax-hook")
-ah.hookAjax({
-    onreadystatechange:function(xhr){
-      ...
-    },
-    onload:function(xhr){
-      ... 
-    },
-   ...
-})
-...
-ah.unHookAjax()
-```
-
-
 
 ## API
 
@@ -132,8 +123,6 @@ hook!<!DOCTYPE html>
 
 ## Notice
 
- All callbacks such as onreadystatechange、onload and son on, the first argument is current XMLHttpRequest instance. All functions, such as open, send and so on, the first parameter is an array of the original parameters, the second parameter is the current origin XMLHttpRequest instance.
+All callbacks such as onreadystatechange、onload and son on, the first argument is current XMLHttpRequest instance. All functions, such as open, send and so on, the first parameter is an array of the original parameters, the second parameter is the current origin XMLHttpRequest instance.
 
 
-
-**BY THE WAY** :  welcome starring my another project [fly.js](https://github.com/wendux/fly)  ! 😄。

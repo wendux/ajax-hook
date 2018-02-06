@@ -3,7 +3,7 @@
  * email: 824783146@qq.com
  * source code: https://github.com/wendux/Ajax-hook
  **/
-!function (ob) {
+module.exports=function (ob) {
     ob.hookAjax = function (funs) {
         window._ahrealxhr = window._ahrealxhr || XMLHttpRequest
         XMLHttpRequest = function () {
@@ -63,5 +63,6 @@
         if (window._ahrealxhr)  XMLHttpRequest = window._ahrealxhr;
         window._ahrealxhr = undefined;
     }
-}(window)
-//}(module.exports)
+    //for typescript
+    ob.default=ob;
+}
