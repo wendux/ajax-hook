@@ -4,3 +4,4 @@ webpack.config.js
 .idea/
 ajaxhook.png
 dist.js
+.travis.yml
