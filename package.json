@@ -23,7 +23,8 @@
     "url": "https://github.com/wendux/Ajax-hook/issues"
   },
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "test": "webpack"
   },
   "devDependencies": {
     "webpack": "^1.13.2"
