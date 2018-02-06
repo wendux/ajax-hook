@@ -1,5 +1,5 @@
 {
-  "name": "ajax-hooks",
+  "name": "ajax-hook",
   "version": "1.8.0",
   "main":"index.js",
   "typings":"./index.d.ts",
