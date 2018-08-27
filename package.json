@@ -1,6 +1,6 @@
 {
   "name": "ajax-hook",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "main":"index.js",
   "typings":"./index.d.ts",
   "author": {
@@ -8,12 +8,12 @@
     "email": "824783146@qq.com",
     "url": "https://github.com/wendux"
   },
-  "description": "Hook Javascript global XMLHttpRequest  object。 And change the  default AJAX   request and response .",
+  "description": "Hooking Javascript XMLHttpRequest object。",
   "keywords": [
     "ajax hook",
     "hook ajax",
     "ajax-hook",
-    "wendux"
+    "intercept ajax"
   ],
   "respository": {
     "type": "git",
