@@ -18,7 +18,8 @@ module.exports=function (ob) {
                 } else {
                     Object.defineProperty(this, attr, {
                         get: getFactory(attr),
-                        set: setFactory(attr)
+                        set: setFactory(attr),
+                        enumerable: true
                     })
                 }
             }
