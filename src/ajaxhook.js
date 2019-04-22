@@ -45,6 +45,10 @@ module.exports = function(ob) {
                 var hook = proxy[attr];
                 if (typeof hook === "function") {
                     xhr[attr] = function() {
+                        if (attr === 'onreadystatechange') {
+                            that.responseText = xhr.responseText;
+                            that.response = xhr.response;
+                        }
                         proxy[attr](that) || v.apply(xhr, arguments);
                     }
                 } else {
