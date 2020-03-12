@@ -35,11 +35,11 @@ Ajax-hook是一个精巧的用于拦截XMLHttpRequest全局对象的库，它可
 ```javascript
 hookAjax({
   //拦截回调
-  onreadystatechange:function(xhr){
-    console.log("onreadystatechange called: %O",xhr)
+  onreadystatechange:function(proxyXhr){
+    console.log("onreadystatechange called: %O",proxyXhr)
   },
-  onload:function(xhr){
-    console.log("onload called: %O",xhr)
+  onload:function(proxyXhr){
+    console.log("onload called: %O",proxyXhr)
   },
   //拦截方法
   open:function(arg,xhr){
@@ -126,7 +126,7 @@ $.get().done(function(d){
         return v;
     }
 
-    //因为无法确定上层使用的是responseText还是respons属性，为了保险起见，两个属性都拦截一下
+    //因为无法确定上层使用的是responseText还是response属性，为了保险起见，两个属性都拦截一下
     hookAjax(
         responseText: {
             getter: tryParseJson2
@@ -154,11 +154,18 @@ $.get().done(function(d){
 
 - 取消拦截；取消后`XMLHttpRequest`将不会再被代理
 
+## 代理xhr对象和原生xhr对象
 
+“原生xhr对象”即浏览器提供的XMLHttpRequest对象实例，而“代理xhr对象”指代理了“原生xhr对象”的对象，用户请求都是通过“代理xhr对象”发出，而“代理xhr对象”中又会调用“原生xhr对象”发起真正的网络请求。用户提供的hook方法参数中会包含“原生xhr对象”和“代理xhr对象”之一。那么哪些方法参数是“原生xhr对象”，哪些拦截方法参数是“代理xhr对象”呢？
+
+1. 事件回调函数，以"on"开头的，如`onreadystatechange`、`onload`等，他们的拦截函数的第一个参数都为代理xhr对象。
+2. 普通方法，如`open`、`send`等，它们的拦截函数的最后一个参数为原生xhr对象。
+
+之所以会有这种区别，是为了使用方便性考虑的。因为在方法拦截函数中我们通常需要调用原生xhr对象的真正方法，而在事件回调函数中
 
 ## 注意
 
-- `XMLHttpRequest`所有回调函数，如`onreadystatechange`、`onload`等，他们的拦截函数的第一个参数都为当前的`XMLHttpRequest`对象，一次请求对应一个`XMLHttpRequest`对象（已代理），所以，你可以通过它来进行请求上下文管理。
+- `XMLHttpRequest`所有回调函数(以"on"开头的，如`onreadystatechange`、`onload`等)，他们的拦截函数的第一个参数都为当前的`XMLHttpRequest`对象**的代理对象**，所以，你可以通过它来进行请求上下文管理。
 
   > 假设对于同一个请求，你需要在其`open`的拦截函数和`onload` 回调中共享一个变量，但由于拦截的是全局XMLHttpRequest对象，所有网络请求会无次序的走到拦截的方法中，这时你可以通过`xhr`来对应请求的上下文信息。在上述场景中，你可以在`open`拦截函数中给`xhr`设置一个属性，然后在`onload`回调中获取即可。
 

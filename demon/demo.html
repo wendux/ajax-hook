@@ -27,15 +27,18 @@ open console panel to view log.
     hookAjax(
         // hook functions and callbacks of XMLHttpRequest object
         {
-            onreadystatechange: function (xhr) {
-                console.log("onreadystatechange called: %O", xhr)
+            onreadystatechange: function (proxyXhr) {
+                console.log("onreadystatechange called: %O", proxyXhr)
                 //return true
             },
-            onload: function (xhr) {
-                console.log("onload called: %O", xhr)
-                xhr.responseText = "hook" + xhr.responseText;
-                //return true;
+            onload: function (proxyXhr) {
+                console.log("xxxxx");
+                console.log(proxyXhr.getProxy());
+                console.log("onload called: %O", proxyXhr)
+                proxyXhr.responseText = "hook" + xhr.responseText;
             },
+
+
             open: function (arg, xhr) {
                 console.log("open called: method:%s,url:%s,async:%s", arg[0], arg[1], arg[2], xhr)
                 arg[1] += "?hook_tag=1";
@@ -50,13 +53,20 @@ open console panel to view log.
                 console.log("setRequestHeader called!", arg)
             },
 
-            // hook attributes of XMLHttpRequest object
-            timeout: {
-                setter: function (v, xhr) {
-                    //timeout shouldn't exceed 10s
-                    return Math.max(v, 1000);
-                }
-            }
+            // // hook attributes of XMLHttpRequest object
+            // timeout: {
+            //     setter: function (v, xhr) {
+            //         console.log("timeout")
+            //         //timeout shouldn't exceed 10s
+            //         return Math.max(v, 1000);
+            //     }
+            // },
+            // // hook attributes of XMLHttpRequest object
+            // responseText: {
+            //     getter: function (v, xhr) {
+            //         return v;
+            //     }
+            // }
         }
     );
 

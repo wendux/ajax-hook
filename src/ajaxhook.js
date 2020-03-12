@@ -36,8 +36,11 @@ module.exports = function (ob) {
                     })
                 }
             }
+            var that = this;
+            xhr.getProxy = function () {
+                return that
+            }
             this.xhr = xhr;
-
         }
 
         // Generate getter for attributes of xhr
@@ -65,10 +68,11 @@ module.exports = function (ob) {
                     //If the attribute isn't writable, generate proxy attribute
                     var attrSetterHook = (hook || {})["setter"];
                     v = attrSetterHook && attrSetterHook(v, that) || v
+                    this[attr + "_"] = v;
                     try {
+                        // Not all attributes of xhr are writable(setter may undefined).
                         xhr[attr] = v;
                     } catch (e) {
-                        this[attr + "_"] = v;
                     }
                 }
             }
@@ -78,8 +82,11 @@ module.exports = function (ob) {
         function hookFunction(fun) {
             return function () {
                 var args = [].slice.call(arguments)
-                if (proxy[fun] && proxy[fun].call(this, args, this.xhr)) {
-                    return;
+                if (proxy[fun]) {
+                    var ret = proxy[fun].call(this, args, this.xhr)
+                    // If the proxy return value exists, return it directly,
+                    // otherwise call the function of xhr.
+                    if (ret) return ret;
                 }
                 return this.xhr[fun].apply(this.xhr, args);
             }
