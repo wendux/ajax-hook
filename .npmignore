@@ -1,6 +1,6 @@
 demon/
 node_modules/
-webpack.config.js
+build.js
 .idea/
 ajaxhook.png
 dist.js

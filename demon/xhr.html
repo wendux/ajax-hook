@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh-cmn-Hans">
+    <meta charset="UTF-8">
+    <title>Ajax hook Demo</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=0.5,user-scalable=no"/>
+    <meta name="keywords" content="Ajax hook Demo">
+    <script src="http://cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+    <script src="../dist/ajaxhook.min.js"></script>
+
+</head>
+<style>
+    html {
+        font-size: 20px;
+        -webkit-user-select: none;
+    }
+</style>
+<body>
+<div style="background: #000; font-size: 38px; color: #ffef68; text-shadow: 2px 2px 10px #ffef68; width: 400px; height: 400px; text-align: center">
+    <div style="padding-top: 100px"> Ajax Hook !</div>
+</div>
+open console panel to view log.
+
+<script>
+    ah.proxy({
+        onRequest: (config, handler) => {
+            if (config.url === 'https://aa/') {
+                handler.resolve({
+                    config: config,
+                    status: 200,
+                    headers: {'content-type': 'text/text'},
+                    response: 'hi world'
+
+                })
+            } else {
+                handler.next(config);
+            }
+        },
+        onError: (err, handler) => {
+            if (err.config.url === 'https://bb/') {
+                handler.resolve({
+                    config: err.config,
+                    status: 200,
+                    headers: {'content-type': 'text/text'},
+                    response: 'hi world'
+                })
+            } else {
+                handler.next(err)
+            }
+        },
+        onResponse: (response, handler) => {
+            if (response.config.url === location.href) {
+                handler.reject({
+                    config: response.config,
+                    type: 'error'
+                })
+            } else {
+                handler.next(response)
+            }
+        }
+    })
+
+
+    function test(url) {
+        var events = ['load', 'loadend', 'timeout', 'error', 'readystatechange', 'abort']
+
+        var xhr = new XMLHttpRequest();
+
+        //setTimeout(()=>xhr.abort(),100)
+        xhr.open('get', url, true);
+        xhr.send();
+        events.forEach(function (e) {
+            xhr['on' + e] = function (event) {
+                console.log('on' + e, xhr.readyState, event)
+            }
+            xhr.addEventListener(e, function (event) {
+                console.log(e, xhr.readyState, event)
+            })
+        });
+        xhr.addEventListener('load', function (event) {
+            console.log('response', xhr.response)
+        })
+
+    }
+
+     test('https://aa/');
+    // test('https://bb/');
+    //test(location.href+"xx")
+
+</script>
+</body>
+</html>

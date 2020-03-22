@@ -21,7 +21,7 @@ Hooking  Javascript  XMLHttpRequest ，It can intercept Ajax requests and respon
    - Using cdn 
 
      ```html
-     <script src="https://unpkg.com/ajax-hook/dist/ajaxhook.min.js"></script>
+     <script src="https://unpkg.com/ajax-hook@2.0.0/dist/ajaxhook.min.js"></script>
      ```
 
    - Using npm
@@ -33,23 +33,19 @@ Hooking  Javascript  XMLHttpRequest ，It can intercept Ajax requests and respon
 2. hook the callbacks and functions you want .
 
    ```javascript
-   hookAjax({
-     //hook callbacks
+   hook({
+   
      onreadystatechange:function(xhr){
        console.log("onreadystatechange called: %O",xhr)
      },
      onload:function(xhr){
        console.log("onload called: %O",xhr)
      },
-     //hook function
      open:function(arg,xhr){
        console.log("open called: method:%s,url:%s,async:%s",arg[0],arg[1],arg[2])
      }
    })
-
-   // NPM
-   // const ah=require("ajax-hook")
-   // ah.hookAjax({...})
+   
    ```
 
 Now, it worked! we use jQuery ajax  to test .
@@ -90,7 +86,7 @@ The return value type of all hook-functions is boolean, if `true`, the ajax requ
 
 ```javascript
 
-hookAjax({
+hook({
   open:function(arg,xhr){
     if(arg[0]=="GET"){
       console.log("Request was aborted! method must be post! ")
@@ -103,10 +99,10 @@ hookAjax({
 Changing the "responseText"
 
 ```javascript
-hookAjax({
+hook({
    onload:function(xhr){
     console.log("onload called: %O",xhr)
-    xhr.responseText="hook!"+xhr.responseText;
+    xhr.responseText=hookAjax+xhr.responseText;
    }
  })
 ```
