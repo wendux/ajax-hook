@@ -192,6 +192,7 @@ function Proxy(proxy) {
         },
         send: function (args, xhr) {
             var config = xhr.config
+            config.withCredentials=xhr.withCredentials
             config.body = args[0];
             if (onRequest) {
                 // In 'onRequest', we may call XHR's event handler, such as `xhr.onload`.
