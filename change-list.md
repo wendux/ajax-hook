@@ -1,5 +1,9 @@
 # Change list
 
+## 2.0.1
+
+- fix #47
+
 ## 2.0
 
 - 添加了两个新API:  `proxy(...)` 、 `unProxy()` 

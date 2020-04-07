@@ -21,7 +21,7 @@ Hooking  Javascript  XMLHttpRequest ，It can intercept Ajax requests and respon
    - Using cdn 
 
      ```html
-     <script src="https://unpkg.com/ajax-hook@2.0.0/dist/ajaxhook.min.js"></script>
+     <script src="https://unpkg.com/ajax-hook@2.0.1/dist/ajaxhook.min.js"></script>
      ```
 
    - Using npm

@@ -84,6 +84,7 @@ function makeHandler(next) {
 var RequestHandler = makeHandler(function (rq) {
     var xhr = this.xhr;
     rq = rq || xhr.config;
+    xhr.withCredentials = rq.withCredentials;
     xhr.open(rq.method, rq.url, rq.async !== false, rq.user, rq.password);
     for (var key in rq.headers) {
         xhr.setRequestHeader(key, rq.headers[key]);
@@ -191,15 +192,15 @@ function Proxy(proxy) {
         },
         send: function (args, xhr) {
             var config = xhr.config
-            config.withCredentials = xhr.withCredentials;
             config.body = args[0];
             if (onRequest) {
                 // In 'onRequest', we may call XHR's event handler, such as `xhr.onload`.
                 // However, XHR's event handler may not be set until xhr.send is called in
                 // the user's code, so we use `setTimeout` to avoid this situation
-                setTimeout(function () {
+                var req = function () {
                     onRequest(config, new RequestHandler(xhr));
-                })
+                }
+                config.async === false ? req() : setTimeout(req)
                 return true;
             }
         },
