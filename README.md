@@ -24,7 +24,7 @@ Ajax-hook是一个精巧的用于拦截浏览器XMLHttpRequest的库，它可以
 - CDN引入
 
   ```html
-  <script src="https://unpkg.com/ajax-hook@2.0.2/dist/ajaxhook.min.js"></script>
+  <script src="https://unpkg.com/ajax-hook@2.0.3/dist/ajaxhook.min.js"></script>
   ```
 
   引入后会有一个名为"ah"（ajax hook）的全局对象，通过它可以调用ajax-hook的API，如`ah.proxy(hooks)`

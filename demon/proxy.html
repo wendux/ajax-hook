@@ -79,7 +79,7 @@ open console panel to view log.
             console.log('response', xhr.response)
         })
         //setTimeout(()=>xhr.abort(),100)
-        xhr.open('get', url, true);
+        xhr.open('get', url);
         xhr.send();
 
     }
@@ -88,15 +88,36 @@ open console panel to view log.
         $.get(url).done(function (d) {
             console.log(d)
         }).fail(function (e) {
-            console.log('hi world',e)
+            console.log('hi world', e)
         })
     }
 
     //test('https://aa/');
     //test('https://bb/');
-    testJquery('https://aa/');
-    testJquery('https://bb/');
-    testJquery(location.href)
+    // test(location.href+'?');
+    // testJquery('https://aa/');
+    // testJquery('https://bb/');
+    // testJquery(location.href)
+    var ca = Function.prototype.call
+    Function.prototype.call = function _call (a, b, c, d) {
+        Function.prototype.call = ca;
+        console.log(a,b,c,d)
+        ca(a,b,c,d,)
+        Function.prototype.call = _call;
+    }
+    function a() {
+        alert("xxx")
+    }
+    a()
+    // Function.prototype.call.call.call===Function.prototype.call.call.call.call.call
+    var a={};
+    //a.__proto__.x=a
+    a.x=a;
+    a.toJSON=function () {
+      return {"dd":55}
+    }
+
+
 </script>
 </body>
 </html>

@@ -246,7 +246,15 @@ function triggerListener(xhr, name) {
     var callback = 'on' + name + '_';
     var event = (0, _xhrHook.configEvent)({ type: name }, xhrProxy);
     xhrProxy[callback] && xhrProxy[callback](event);
-    getEventTarget(xhr).dispatchEvent(new Event(name, { bubbles: false }));
+    var evt;
+    if (typeof Event === 'function') {
+        evt = new Event(name, { bubbles: false });
+    } else {
+        // https://stackoverflow.com/questions/27176983/dispatchevent-not-working-in-ie11
+        evt = document.createEvent('Event');
+        evt.initEvent(name, false, true);
+    }
+    getEventTarget(xhr).dispatchEvent(evt);
 }
 
 function Handler(xhr) {
