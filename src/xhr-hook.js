@@ -15,12 +15,12 @@ export function configEvent(event, xhrProxy) {
     return e;
 }
 
-export function hook(proxy) {
+export function hook(proxy, win = window) {
     // Avoid double hookAjax
-    window[realXhr] = window[realXhr] || XMLHttpRequest
+    win[realXhr] = win[realXhr] || win.XMLHttpRequest
 
-    XMLHttpRequest = function () {
-        var xhr = new window[realXhr];
+    win.XMLHttpRequest = function () {
+        var xhr = new win[realXhr];
         // We shouldn't hookAjax XMLHttpRequest.prototype because we can't
         // guarantee that all attributes are on the prototype。
         // Instead, hooking XMLHttpRequest instance can avoid this problem.
@@ -101,12 +101,12 @@ export function hook(proxy) {
     }
 
     // Return the real XMLHttpRequest
-    return window[realXhr];
+    return win[realXhr];
 }
 
-export function unHook() {
-    if (window[realXhr]) XMLHttpRequest = window[realXhr];
-    window[realXhr] = undefined;
+export function unHook(win = window) {
+    if (win[realXhr]) win.XMLHttpRequest = win[realXhr];
+    win[realXhr] = undefined;
 }
 
 

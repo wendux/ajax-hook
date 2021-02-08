@@ -15,18 +15,16 @@ var eventLoad = events[0],
     eventAbort = events[5];
 
 
-var singleton,
-    prototype = 'prototype';
+var prototype = 'prototype';
 
-
-export function proxy(proxy) {
-    if (singleton) throw "Proxy already exists";
-    return singleton = new Proxy(proxy);
+export function proxy(proxy, win= window) {
+    if (win.singletonAjaxHook) throw "Proxy already exists";
+    return win.singletonAjaxHook = new Proxy(proxy, win);
 }
 
-export function unProxy() {
-    singleton = null
-    unHook()
+export function unProxy(win = window) {
+    win.singletonAjaxHook = null
+    unHook(win)
 }
 
 function trim(str) {
@@ -108,7 +106,7 @@ var ErrorHandler = makeHandler(function (error) {
     this.reject(error);
 });
 
-function Proxy(proxy) {
+function Proxy(proxy, win = window) {
     var onRequest = proxy.onRequest,
         onResponse = proxy.onResponse,
         onError = proxy.onError;
@@ -247,7 +245,7 @@ function Proxy(proxy) {
                 return headers[(args[0] || '').toLowerCase()];
             }
         }
-    });
+    }, win);
 }
 
 
