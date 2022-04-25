@@ -328,7 +328,6 @@ function Proxy(proxy) {
 
   function handleResponse(xhr, xhrProxy) {
     var handler = new ResponseHandler(xhr);
-    if (!onResponse) return handler.resolve();
     var ret = {
       response: xhrProxy.response,
       status: xhrProxy.status,
@@ -341,6 +340,7 @@ function Proxy(proxy) {
         return ob;
       }, {})
     };
+    if (!onResponse) return handler.resolve(ret);
     onResponse(ret, handler);
   }
 
