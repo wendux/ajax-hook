@@ -23,9 +23,9 @@ export function proxy(proxy) {
   return singleton = new Proxy(proxy);
 }
 
-export function unProxy() {
+export function unProxy(win) {
   singleton = null
-  unHook()
+  unHook(win)
 }
 
 function trim(str) {
@@ -107,7 +107,7 @@ var ErrorHandler = makeHandler(function (error) {
   this.reject(error);
 });
 
-function Proxy(proxy) {
+function Proxy(proxy, win) {
   var onRequest = proxy.onRequest,
     onResponse = proxy.onResponse,
     onError = proxy.onError;
@@ -240,7 +240,7 @@ function Proxy(proxy) {
         return headers[(args[0] || '').toLowerCase()];
       }
     }
-  });
+  }, win);
 }
 
 

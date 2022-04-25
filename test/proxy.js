@@ -40,5 +40,5 @@ index_1.proxy({
             handler.next(response);
         }
     }
-});
+}, window);
 test_1.testProxy();

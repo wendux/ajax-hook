@@ -24,7 +24,7 @@ Ajax-hook是一个精巧的用于拦截浏览器XMLHttpRequest的库，它可以
 - CDN引入
 
   ```html
-  <script src="https://unpkg.com/ajax-hook@2.0.7/dist/ajaxhook.min.js"></script>
+  <script src="https://unpkg.com/ajax-hook@2.0.9/dist/ajaxhook.min.js"></script>
   ```
 
   引入后会有一个名为"ah"（ajax hook）的全局对象，通过它可以调用ajax-hook的API，如`ah.proxy(hooks)`
@@ -285,7 +285,13 @@ $.get().done(function(d){
 
 - 取消拦截；取消后`XMLHttpRequest`将不会再被代理，浏览器原生`XMLHttpRequest`会恢复到全局变量空间。
 
-
+## 拦截iframe
+可以将iframe 的 window 对象作为API的可选参数，比如：
+```javascript
+var iframWindow = ...;
+proxy(config,iframWindow)
+unProxy(iframWindow)
+```
 
 ## 代理xhr对象和原生xhr对象
 

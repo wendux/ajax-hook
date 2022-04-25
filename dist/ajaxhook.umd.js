@@ -112,17 +112,18 @@ function configEvent(event, xhrProxy) {
   return e;
 }
 
-function hook(proxy) {
+function hook(proxy, win) {
+  win = win || window;
   // Avoid double hookAjax
-  window[realXhr] = window[realXhr] || XMLHttpRequest;
+  win[realXhr] = win[realXhr] || win.XMLHttpRequest;
 
-  XMLHttpRequest = function XMLHttpRequest() {
+  win.XMLHttpRequest = function () {
 
     // We shouldn't hookAjax XMLHttpRequest.prototype because we can't
     // guarantee that all attributes are on the prototype。
     // Instead, hooking XMLHttpRequest instance can avoid this problem.
 
-    var xhr = new window[realXhr]();
+    var xhr = new win[realXhr]();
 
     // Generate all callbacks(eg. onload) are enumerable (not undefined).
     for (var i = 0; i < events.length; ++i) {
@@ -152,7 +153,7 @@ function hook(proxy) {
     this.xhr = xhr;
   };
 
-  Object.assign(XMLHttpRequest, { UNSENT: 0, OPENED: 1, HEADERS_RECEIVED: 2, LOADING: 3, DONE: 4 });
+  Object.assign(win.XMLHttpRequest, { UNSENT: 0, OPENED: 1, HEADERS_RECEIVED: 2, LOADING: 3, DONE: 4 });
 
   // Generate getter for attributes of xhr
   function getterFactory(attr) {
@@ -206,12 +207,13 @@ function hook(proxy) {
   }
 
   // Return the real XMLHttpRequest
-  return window[realXhr];
+  return win[realXhr];
 }
 
-function unHook() {
-  if (window[realXhr]) XMLHttpRequest = window[realXhr];
-  window[realXhr] = undefined;
+function unHook(win) {
+  win = win || window;
+  if (win[realXhr]) win.XMLHttpRequest = win[realXhr];
+  win[realXhr] = undefined;
 }
 
 /***/ }),
@@ -248,9 +250,9 @@ function proxy(proxy) {
   return singleton = new Proxy(proxy);
 }
 
-function unProxy() {
+function unProxy(win) {
   singleton = null;
-  (0, _xhrHook.unHook)();
+  (0, _xhrHook.unHook)(win);
 }
 
 function trim(str) {
@@ -331,7 +333,7 @@ var ErrorHandler = makeHandler(function (error) {
   this.reject(error);
 });
 
-function Proxy(proxy) {
+function Proxy(proxy, win) {
   var onRequest = proxy.onRequest,
       onResponse = proxy.onResponse,
       onError = proxy.onError;
@@ -464,7 +466,7 @@ function Proxy(proxy) {
         return headers[(args[0] || '').toLowerCase()];
       }
     }
-  });
+  }, win);
 }
 
 /***/ }),
