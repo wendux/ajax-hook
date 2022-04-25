@@ -15,7 +15,7 @@ Ajax-hook是一个精巧的用于拦截浏览器XMLHttpRequest的库，它可以
 
 ## 更新记录
 
-2.0版本已发布，2.0和1.x最大的区别是添加了`proxy`方法，这是详细的[change list](./change-list.md) 。
+2.0版本已发布，2.x和1.x最大的区别是添加了`proxy`方法，这是详细的[change list](./change-list.md) 。
 
 ## 使用
 
@@ -24,7 +24,7 @@ Ajax-hook是一个精巧的用于拦截浏览器XMLHttpRequest的库，它可以
 - CDN引入
 
   ```html
-  <script src="https://unpkg.com/ajax-hook@2.0.3/dist/ajaxhook.min.js"></script>
+  <script src="https://unpkg.com/ajax-hook@2.0.6/dist/ajaxhook.min.js"></script>
   ```
 
   引入后会有一个名为"ah"（ajax hook）的全局对象，通过它可以调用ajax-hook的API，如`ah.proxy(hooks)`
