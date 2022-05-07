@@ -153,7 +153,7 @@ hook({
   },
   //拦截方法
   open:function(args,xhr){
-    console.log("open called: method:%s,url:%s,async:%s",arg[0],arg[1],arg[2])
+    console.log("open called: method:%s,url:%s,async:%s",args[0],args[1],args[2])
     //拦截方法的返回值含义同拦截回调的返回值
     return false
   }
