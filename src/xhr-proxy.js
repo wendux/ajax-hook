@@ -18,9 +18,9 @@ var singleton,
   prototype = 'prototype';
 
 
-export function proxy(proxy,win) {
+export function proxy(proxy, win) {
   if (singleton) throw "Proxy already exists";
-  return singleton = new Proxy(proxy,win);
+  return singleton = new Proxy(proxy, win);
 }
 
 export function unProxy(win) {
@@ -115,7 +115,7 @@ function Proxy(proxy, win) {
   function handleResponse(xhr, xhrProxy) {
     var handler = new ResponseHandler(xhr);
     var ret = {
-      response: xhrProxy.response||xhrProxy.responseText, //ie9
+      response: xhrProxy.response || xhrProxy.responseText, //ie9
       status: xhrProxy.status,
       statusText: xhrProxy.statusText,
       config: xhr.config,
@@ -209,7 +209,7 @@ function Proxy(proxy, win) {
     setRequestHeader: function (args, xhr) {
       // Collect request headers
       xhr.config.headers[args[0].toLowerCase()] = args[1];
-      return true;
+      if (onRequest) return true;
     },
     addEventListener: function (args, xhr) {
       var _this = this;

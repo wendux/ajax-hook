@@ -426,7 +426,7 @@ function Proxy(proxy, win) {
     setRequestHeader: function setRequestHeader(args, xhr) {
       // Collect request headers
       xhr.config.headers[args[0].toLowerCase()] = args[1];
-      return true;
+      if (onRequest) return true;
     },
     addEventListener: function addEventListener(args, xhr) {
       var _this = this;

@@ -1,6 +1,6 @@
 {
   "name": "ajax-hook",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "main": "index.js",
   "typings": "./index.d.ts",
   "author": {
