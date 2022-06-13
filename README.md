@@ -3,12 +3,6 @@
 [![npm version](https://img.shields.io/npm/v/ajax-hook.svg)](https://www.npmjs.org/package/ajax-hook) [![build status](https://travis-ci.org/wendux/Ajax-hook.svg?branch=master)](https://travis-ci.org/wendux/Ajax-hook) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit-license.php) ![](https://img.shields.io/badge/TypeScript-support-orange.svg)   [![](https://img.shields.io/github/size/wendux/Ajax-hook/dist/ajaxhook.core.min.js.svg)](https://unpkg.com/ajax-hook@2.0.0/dist/ajaxhook.core.min.js)
 
 
-
-
-![image](https://github.com/wendux/Ajax-hook/raw/master/ajaxhook.png)
-
-原理解析:[http://www.jianshu.com/p/7337ac624b8e](http://www.jianshu.com/p/7337ac624b8e)
-
 ## 简介
 
 ajax-hook是用于拦截浏览器 XMLHttpRequest 对象的轻量库，它可以在 XMLHttpRequest 对象发起请求之前、收到响应内容之后以及发生错误时获得处理权，通过它你可以提前对请求、响应以及错误进行一些预处理。Ajax-hook具有很好的兼容性，可以在任何支持**ES5**的浏览器上运行，因为它并不依赖 ES6 特性。
@@ -191,7 +185,7 @@ hook({
   },
   //拦截方法
   open:function(args,xhr){
-    console.log("open called: method:%s,url:%s,async:%s",arg[0],arg[1],arg[2])
+    console.log("open called: method:%s,url:%s,async:%s",args[0],args[1],args[2])
     //拦截方法的返回值含义同拦截回调的返回值
     return false
   }
@@ -349,10 +343,15 @@ unHook(frameWindow)
 
 > 注意：只能拦截**同源**的iframe页面（不能跨域）。
 
+## 原理解析
+通过ES5 getter和setter特性实现对 XMLHttpRequest 对象的代理：
+![image](https://github.com/wendux/Ajax-hook/raw/master/ajaxhook.png)
+
+具体原理解析请查看：[ajax-hook 原理解析](https://juejin.cn/post/6844903470181384206)。
+
 ## 最后
 
-本库在2016年首次开源，最初只是个人研究所用，源码50行左右，实现了一个Ajax拦截的核心，并非一个完整可商用的项目。自开源后，有好多人对这个黑科技比较感兴趣，于是我便写了篇介绍的博客，由于代码比较精炼，所以对于JavaScript不是很精通的同学可能看起来比较吃力，之后专门写了一篇原理解析的文章，现在已经有很多公司已经将 ajax-hook 用于线上项目中，直到我知道美团、滴滴也用到之后，笔者对此库进行了修改和扩展以增强其健壮性和实用性，现在已经达到商用的标准，本库也将进行技术支持。如果你喜欢，欢迎Star，如果有问题，欢迎提Issue， 如果你想打赏或想请作者喝杯咖啡，请扫描下面二维码：
+本库在2016年首次开源，最初只是个人研究所用，源码50行左右，实现了一个Ajax拦截的核心，并非一个完整可商用的项目。自开源后，有好多人对这个黑科技比较感兴趣，于是我便写了篇介绍的博客，由于代码比较精炼，所以对于JavaScript不是很精通的同学可能看起来比较吃力，之后专门写了一篇原理解析的文章，现在已经有很多公司已经将 ajax-hook 用于线上项目中，直到我知道美团、滴滴也用到之后，笔者对此库进行了修改和扩展以增强其健壮性和实用性，现在已经达到商用的标准，本库也将进行技术支持。如果你喜欢，欢迎Star，如果有问题，欢迎提Issue， 如果你觉得对自己有用想请作者喝杯咖啡的话，请扫描下面二维码：
 
+<img  width=300 src="https://doc.flutterchina.club/images/pay29.jpeg" />
 
-
-![image-20180827191240122](https://book.flutterchina.club/assets/img/pay.a6c3cb25.jpeg)
