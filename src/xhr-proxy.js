@@ -115,7 +115,7 @@ function Proxy(proxy, win) {
   function handleResponse(xhr, xhrProxy) {
     var handler = new ResponseHandler(xhr);
     var ret = {
-      response: xhrProxy.response,
+      response: xhrProxy.response||xhrProxy.responseText, //ie9
       status: xhrProxy.status,
       statusText: xhrProxy.statusText,
       config: xhr.config,
