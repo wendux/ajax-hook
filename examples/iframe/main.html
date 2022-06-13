@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>hook iframe</title>
+  <script src="../../dist/ajaxhook.min.js"></script>
+</head>
+<body>
+<iframe id='if1' src="inner.html"></iframe>
+<script>
+  let win = window.frames['if1'].contentWindow //iframe window对象
+  var count = 0;
+  ah.proxy({
+      onRequest: (config, handler) => {
+        if (config.url === 'https://aa/') {
+          if (count++ % 2) {
+            console.log('请求https://aa/; 伪造返回，请求会成功');
+            handler.resolve({
+              config: config,
+              status: 200,
+              headers: {'content-type': 'text/text'},
+              response: 'hi world'
+            })
+          } else {
+            console.log('请求https://aa/; 无效网址会失败');
+            handler.next(config);
+          }
+        } else {
+          handler.next(config);
+        }
+      },
+    },
+    win, //传入iframe window对象
+  )
+</script>
+</body>
+</html>

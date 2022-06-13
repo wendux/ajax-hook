@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>proxy request</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+<div>连续点击按钮并查看日志</div>
+<button onclick="onClick()">请求</button>
+<script>
+  function onClick() {
+    axios.get('https://aa/')
+      .then((response) => {
+        // handle success
+        console.log('sucess', response);
+      }).catch((e) => {
+      console.log('error', e.message);
+    })
+  }
+</script>
+
+</body>
+</html>

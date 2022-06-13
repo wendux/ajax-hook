@@ -235,9 +235,9 @@ var eventLoad = _xhrHook.events[0],
 var singleton,
     prototype = 'prototype';
 
-function proxy(proxy) {
+function proxy(proxy, win) {
   if (singleton) throw "Proxy already exists";
-  return singleton = new Proxy(proxy);
+  return singleton = new Proxy(proxy, win);
 }
 
 function unProxy(win) {

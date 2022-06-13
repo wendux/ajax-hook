@@ -18,9 +18,9 @@ var singleton,
   prototype = 'prototype';
 
 
-export function proxy(proxy) {
+export function proxy(proxy,win) {
   if (singleton) throw "Proxy already exists";
-  return singleton = new Proxy(proxy);
+  return singleton = new Proxy(proxy,win);
 }
 
 export function unProxy(win) {
@@ -84,7 +84,7 @@ function makeHandler(next) {
   }
 
   sub[prototype] = Object.create(Handler[prototype]);
-  sub[prototype].next = next;
+  sub[prototype].next = next
   return sub;
 }
 

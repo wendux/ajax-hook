@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>proxy request</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="../dist/ajaxhook.min.js"></script>
+</head>
+<body>
+
+<div>连续点击按钮并查看日志</div>
+<button onclick="onClick()">请求</button>
+<script>
+  var count = 0;
+  ah.proxy({
+    onRequest: (config, handler) => {
+      if (config.url === 'https://aa/') {
+        if (count++ % 2) {
+          console.log('请求https://aa/; 伪造返回，请求会成功');
+          handler.resolve({
+            config: config,
+            status: 200,
+            headers: {'content-type': 'text/text'},
+            response: 'hi world'
+          })
+        } else {
+          console.log('请求https://aa/; 无效网址会失败');
+          handler.next(config);
+        }
+      } else {
+        handler.next(config);
+      }
+    },
+  })
+
+  function onClick() {
+    axios.get('https://aa/')
+      .then((response) => {
+        // handle success
+        console.log('sucess', response);
+      }).catch((e) => {
+      console.log('error', e.message);
+    })
+  }
+
+</script>
+
+</body>
+</html>
