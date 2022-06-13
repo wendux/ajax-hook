@@ -1,6 +1,6 @@
 # Change list
 
-## 2.1.0
+## 2.1.2
 
 - 添加可选参数[window]，可以指定iframe的window对象来拦截同源iframe页面内的ajax请求。
 

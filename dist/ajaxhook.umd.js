@@ -127,7 +127,8 @@ function hook(proxy, win) {
 
     // Generate all callbacks(eg. onload) are enumerable (not undefined).
     for (var i = 0; i < events.length; ++i) {
-      if (xhr[events[i]] === undefined) xhr[events[i]] = null;
+      var key = 'on' + events[i];
+      if (xhr[key] === undefined) xhr[key] = null;
     }
 
     for (var attr in xhr) {
