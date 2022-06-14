@@ -14,17 +14,16 @@ var eventLoad = events[0],
   eventAbort = events[5];
 
 
-var singleton,
-  prototype = 'prototype';
+var prototype = 'prototype';
 
 
 export function proxy(proxy, win) {
-  if (singleton) throw "Proxy already exists";
-  return singleton = new Proxy(proxy, win);
+  win = win || window;
+  if (win['__xhr']) throw "Ajax is already hooked.";
+  return proxyAjax(proxy, win);
 }
 
 export function unProxy(win) {
-  singleton = null
   unHook(win)
 }
 
@@ -107,7 +106,7 @@ var ErrorHandler = makeHandler(function (error) {
   this.reject(error);
 });
 
-function Proxy(proxy, win) {
+function proxyAjax(proxy, win) {
   var onRequest = proxy.onRequest,
     onResponse = proxy.onResponse,
     onError = proxy.onError;

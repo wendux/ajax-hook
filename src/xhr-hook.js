@@ -5,7 +5,7 @@
  */
 
 // Save original XMLHttpRequest as _rxhr
-var realXhr = "_rxhr"
+var realXhr = "__xhr"
 
 export var events = ['load', 'loadend', 'timeout', 'error', 'readystatechange', 'abort'];
 

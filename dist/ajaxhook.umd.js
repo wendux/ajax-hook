@@ -99,7 +99,7 @@ exports.unHook = unHook;
  */
 
 // Save original XMLHttpRequest as _rxhr
-var realXhr = "_rxhr";
+var realXhr = "__xhr";
 
 var events = exports.events = ['load', 'loadend', 'timeout', 'error', 'readystatechange', 'abort'];
 
@@ -243,16 +243,15 @@ var eventLoad = _xhrHook.events[0],
                                       * source code: https://github.com/wendux/Ajax-hook
                                       */
 
-var singleton,
-    prototype = 'prototype';
+var prototype = 'prototype';
 
 function proxy(proxy, win) {
-  if (singleton) throw "Proxy already exists";
-  return singleton = new Proxy(proxy, win);
+  win = win || window;
+  if (win['__xhr']) throw "Ajax is already hooked.";
+  return proxyAjax(proxy, win);
 }
 
 function unProxy(win) {
-  singleton = null;
   (0, _xhrHook.unHook)(win);
 }
 
@@ -334,7 +333,7 @@ var ErrorHandler = makeHandler(function (error) {
   this.reject(error);
 });
 
-function Proxy(proxy, win) {
+function proxyAjax(proxy, win) {
   var onRequest = proxy.onRequest,
       onResponse = proxy.onResponse,
       onError = proxy.onError;

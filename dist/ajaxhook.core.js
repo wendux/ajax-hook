@@ -89,7 +89,7 @@ exports.unHook = unHook;
  */
 
 // Save original XMLHttpRequest as _rxhr
-var realXhr = "_rxhr";
+var realXhr = "__xhr";
 
 var events = exports.events = ['load', 'loadend', 'timeout', 'error', 'readystatechange', 'abort'];
 
