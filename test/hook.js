@@ -2,7 +2,7 @@
 exports.__esModule = true;
 var index_1 = require("../index");
 var test_1 = require("./test");
-index_1.hook({
+(0, index_1.hook)({
     onreadystatechange: function (xhr) {
         console.log("onreadystatechange called: %O", xhr);
     },
@@ -24,4 +24,4 @@ index_1.hook({
         console.log("setRequestHeader called!", args);
     }
 });
-test_1.testHook();
+(0, test_1.testHook)();

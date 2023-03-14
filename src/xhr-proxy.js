@@ -106,6 +106,19 @@ var ErrorHandler = makeHandler(function (error) {
   this.reject(error);
 });
 
+/**
+ * safe way to get `xhrProxy.response` or `xhrProxy.responseText`
+ * @param { XMLHttpRequest } xhrProxy xhrProxy object 
+ */
+function getResponseOrText(xhrProxy) {
+  if (xhrProxy.response == null) {
+    if (xhrProxy.responseType === '' || xhrProxy.responseType === 'text') {
+      return xhrProxy.responseText;
+    }
+  }
+  return xhrProxy.response;
+}
+
 function proxyAjax(proxy, win) {
   var onRequest = proxy.onRequest,
     onResponse = proxy.onResponse,
@@ -114,7 +127,7 @@ function proxyAjax(proxy, win) {
   function handleResponse(xhr, xhrProxy) {
     var handler = new ResponseHandler(xhr);
     var ret = {
-      response: xhrProxy.response || xhrProxy.responseText, //ie9
+      response: getResponseOrText(xhrProxy), //ie9
       status: xhrProxy.status,
       statusText: xhrProxy.statusText,
       config: xhr.config,

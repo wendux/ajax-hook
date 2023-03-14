@@ -130,7 +130,7 @@ exports.unHook = unHook;
  */
 
 // Save original XMLHttpRequest as _rxhr
-var realXhr = "_rxhr";
+var realXhr = "__xhr";
 
 var events = exports.events = ['load', 'loadend', 'timeout', 'error', 'readystatechange', 'abort'];
 
@@ -158,7 +158,8 @@ function hook(proxy, win) {
 
     // Generate all callbacks(eg. onload) are enumerable (not undefined).
     for (var i = 0; i < events.length; ++i) {
-      if (xhr[events[i]] === undefined) xhr[events[i]] = null;
+      var key = 'on' + events[i];
+      if (xhr[key] === undefined) xhr[key] = null;
     }
 
     for (var attr in xhr) {
@@ -314,16 +315,15 @@ var eventLoad = _xhrHook.events[0],
                                       * source code: https://github.com/wendux/Ajax-hook
                                       */
 
-var singleton,
-    prototype = 'prototype';
+var prototype = 'prototype';
 
-function proxy(proxy) {
-  if (singleton) throw "Proxy already exists";
-  return singleton = new Proxy(proxy);
+function proxy(proxy, win) {
+  win = win || window;
+  if (win['__xhr']) throw "Ajax is already hooked.";
+  return proxyAjax(proxy, win);
 }
 
 function unProxy(win) {
-  singleton = null;
   (0, _xhrHook.unHook)(win);
 }
 
@@ -405,7 +405,20 @@ var ErrorHandler = makeHandler(function (error) {
   this.reject(error);
 });
 
-function Proxy(proxy, win) {
+/**
+ * safe way to get `xhrProxy.response` or `xhrProxy.responseText`
+ * @param { XMLHttpRequest } xhrProxy xhrProxy object 
+ */
+function getResponseOrText(xhrProxy) {
+  if (xhrProxy.response == null) {
+    if (xhrProxy.responseType === '' || xhrProxy.responseType === 'text') {
+      return xhrProxy.responseText;
+    }
+  }
+  return xhrProxy.response;
+}
+
+function proxyAjax(proxy, win) {
   var onRequest = proxy.onRequest,
       onResponse = proxy.onResponse,
       onError = proxy.onError;
@@ -413,7 +426,7 @@ function Proxy(proxy, win) {
   function handleResponse(xhr, xhrProxy) {
     var handler = new ResponseHandler(xhr);
     var ret = {
-      response: xhrProxy.response,
+      response: getResponseOrText(xhrProxy), //ie9
       status: xhrProxy.status,
       statusText: xhrProxy.statusText,
       config: xhr.config,
@@ -507,7 +520,7 @@ function Proxy(proxy, win) {
     setRequestHeader: function setRequestHeader(args, xhr) {
       // Collect request headers
       xhr.config.headers[args[0].toLowerCase()] = args[1];
-      return true;
+      if (onRequest) return true;
     },
     addEventListener: function addEventListener(args, xhr) {
       var _this = this;

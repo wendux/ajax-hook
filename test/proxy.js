@@ -2,7 +2,7 @@
 exports.__esModule = true;
 var index_1 = require("../index");
 var test_1 = require("./test");
-index_1.proxy({
+(0, index_1.proxy)({
     onRequest: function (config, handler) {
         if (config.url === 'https://aa/') {
             handler.resolve({
@@ -41,4 +41,4 @@ index_1.proxy({
         }
     }
 }, window);
-test_1.testProxy();
+(0, test_1.testProxy)();
