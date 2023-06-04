@@ -4,7 +4,7 @@
  * source code: https://github.com/wendux/Ajax-hook
  */
 
-import {hook, unHook, configEvent, events} from "./xhr-hook";
+import {hook, configEvent, events} from "./xhr-hook";
 
 var eventLoad = events[0],
   eventLoadEnd = events[1],
@@ -19,12 +19,7 @@ var prototype = 'prototype';
 
 export function proxy(proxy, win) {
   win = win || window;
-  if (win['__xhr']) throw "Ajax is already hooked.";
   return proxyAjax(proxy, win);
-}
-
-export function unProxy(win) {
-  unHook(win)
 }
 
 function trim(str) {
@@ -159,7 +154,7 @@ function proxyAjax(proxy, win) {
     return true;
   }
 
-  return hook({
+  var { originXhr, unHook } =  hook({
     onload: preventXhrProxyCallback,
     onloadend: preventXhrProxyCallback,
     onerror: errorCallback(eventError),
@@ -240,6 +235,11 @@ function proxyAjax(proxy, win) {
       }
     }
   }, win);
+
+  return {
+    originXhr,
+    unProxy: unHook
+  }
 }
 
 

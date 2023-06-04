@@ -1,11 +1,19 @@
-import {unHook} from "../index";
-
 function testJquery(url) {
-    window['jQuery'].get(url).done(function (d) {
-        console.log(d)
-    }).fail(function (e) {
-        console.log('hi world')
-    })
+    var xhr = new XMLHttpRequest();
+    xhr.open('get', url);
+    xhr.send();
+    xhr.onload = () => {
+        if (xhr.status === 200) {
+            console.log(xhr);
+        }
+    }
+    xhr.onerror = () => {
+        console.log(xhr.response);
+    }
+}
+
+export function testHook() {
+    testJquery('https://aa/');
 }
 
 export function testProxy() {
@@ -14,15 +22,4 @@ export function testProxy() {
     testJquery(location.href)
 }
 
-export function testHook() {
-    $.get().done(function (d) {
-        console.log(d.substr(0, 30) + "...")
-        //use original XMLHttpRequest
-        console.log("unhook")
-        unHook()
-        $.get().done(function (d) {
-            console.log(d.substr(0, 10))
-        })
 
-    })
-}

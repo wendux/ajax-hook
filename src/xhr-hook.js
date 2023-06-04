@@ -4,10 +4,9 @@
  * source code: https://github.com/wendux/Ajax-hook
  */
 
-// Save original XMLHttpRequest as _rxhr
-var realXhr = "__xhr"
-
 export var events = ['load', 'loadend', 'timeout', 'error', 'readystatechange', 'abort'];
+
+var OriginXhr = '__origin_xhr';
 
 export function configEvent(event, xhrProxy) {
   var e = {};
@@ -19,17 +18,14 @@ export function configEvent(event, xhrProxy) {
 
 export function hook(proxy, win) {
   win = win || window;
-  // Avoid double hookAjax
-  win[realXhr] = win[realXhr] || win.XMLHttpRequest
+  var originXhr = win.XMLHttpRequest;
 
   win.XMLHttpRequest = function () {
-
     // We shouldn't hookAjax XMLHttpRequest.prototype because we can't
     // guarantee that all attributes are on the prototype。
     // Instead, hooking XMLHttpRequest instance can avoid this problem.
 
-    var xhr = new win[realXhr];
-
+    var xhr = new originXhr();
 
     // Generate all callbacks(eg. onload) are enumerable (not undefined).
     for (var i = 0; i < events.length; ++i) {
@@ -46,19 +42,19 @@ export function hook(proxy, win) {
       if (type === "function") {
         // hookAjax methods of xhr, such as `open`、`send` ...
         this[attr] = hookFunction(attr);
-      } else {
+      } else if (attr !== OriginXhr) {
         Object.defineProperty(this, attr, {
           get: getterFactory(attr),
           set: setterFactory(attr),
           enumerable: true
-        })
+        }) 
       }
     }
     var that = this;
     xhr.getProxy = function () {
       return that
     }
-    this.xhr = xhr;
+    this[OriginXhr] = xhr;
   }
 
   Object.assign(win.XMLHttpRequest, {UNSENT: 0, OPENED: 1, HEADERS_RECEIVED: 2, LOADING: 3, DONE: 4});
@@ -66,9 +62,9 @@ export function hook(proxy, win) {
   // Generate getter for attributes of xhr
   function getterFactory(attr) {
     return function () {
-      var v = this.hasOwnProperty(attr + "_") ? this[attr + "_"] : this.xhr[attr];
-      var attrGetterHook = (proxy[attr] || {})["getter"]
-      return attrGetterHook && attrGetterHook(v, this) || v
+      var v = this.hasOwnProperty(attr + "_") ? this[attr + "_"] : this[OriginXhr][attr];
+      var attrGetterHook = (proxy[attr] || {})["getter"];
+      return attrGetterHook && attrGetterHook(v, this) || v;
     }
   }
 
@@ -76,7 +72,7 @@ export function hook(proxy, win) {
   // to hookAjax event callbacks （eg: `onload`） of xhr;
   function setterFactory(attr) {
     return function (v) {
-      var xhr = this.xhr;
+      var xhr = this[OriginXhr];
       var that = this;
       var hook = proxy[attr];
       // hookAjax  event callbacks such as `onload`、`onreadystatechange`...
@@ -104,25 +100,24 @@ export function hook(proxy, win) {
   // Hook methods of xhr.
   function hookFunction(fun) {
     return function () {
-      var args = [].slice.call(arguments)
+      var args = [].slice.call(arguments);
       if (proxy[fun]) {
-        var ret = proxy[fun].call(this, args, this.xhr)
+        var ret = proxy[fun].call(this, args, this[OriginXhr])
         // If the proxy return value exists, return it directly,
         // otherwise call the function of xhr.
         if (ret) return ret;
       }
-      return this.xhr[fun].apply(this.xhr, args);
+      return this[OriginXhr][fun].apply(this[OriginXhr], args);
     }
   }
 
-  // Return the real XMLHttpRequest
-  return win[realXhr];
-}
+  function unHook() {
+      win.XMLHttpRequest = originXhr;
+      originXhr = undefined;
+  }
 
-export function unHook(win) {
-  win = win || window
-  if (win[realXhr]) win.XMLHttpRequest = win[realXhr];
-  win[realXhr] = undefined;
+  // Return the real XMLHttpRequest and unHook func
+  return { originXhr, unHook  };
 }
 
 
