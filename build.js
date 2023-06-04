@@ -84,6 +84,10 @@ let config = {
             }
         ]
     },
+    watch: true,
+    watchOptions: {
+        ignored: '**/node_modules',
+    },
     plugins: plugins
 }
 

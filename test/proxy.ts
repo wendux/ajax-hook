@@ -1,58 +1,49 @@
-import {proxy} from "../index"
-import {testProxy} from './test'
+import { proxy } from "../index"
+import { testRequest } from './test'
 
-proxy({
+
+export function testProxy() {
+  testRequest('https://cc/');
+}
+
+const { unProxy: unProxy1, originXhr: originXhr1 } = proxy({
   onRequest: (config, handler) => {
-    config.headers = { 'content-type': 'text/text', customHeader1: 'customHeader1', ...config.headers }
-    if (config.url === 'https://aa/') {
-      handler.resolve({
-        config: config,
-        status: 200,
-        headers: config.headers,
-        response: 'hi world'
-      });
-    } else {
-      handler.next(config);
-    }
+    console.log(`1. onRequest: ${config.url}`);
+    config.headers = { 'content-type': 'text/text', customHeader1: 'customHeader1', ...config.headers };
+    handler.next(config);
 
   },
   onError: (err, handler) => {
-    if (err.config.url === 'https://bb/') {
-      handler.resolve({
-        config: err.config,
-        status: 200,
-        headers: { 'content-type': 'text/text', customHeader1: 'customHeader1', ...err.config.headers },
-        response: 'hi world'
-      })
-    } else {
-      handler.next(err)
-    }
+    console.log(`1. onError: ${err.config.url}`);
+    handler.next(err);
   },
   onResponse: (response, handler) => {
-    if (response.config.url === location.href) {
-      handler.reject({
-        config: response.config,
-        type: 'error'
-      })
-    } else {
-      handler.next(response)
-    }
+    console.log(`1. onResponse: ${response.config.url}`);
+    handler.next(response);
   }
 }, window);
 
 
-var { unProxy } = proxy({
-  onRequest: (config, handler) => {
-    config.headers = {
-      ...config.headers,
-      customHeader2: 'customHeader2'
-    }
-    handler.next(config);
-  },
-}, window);
+// const { unProxy: unProxy2, originXhr: originXhr2 } = proxy({
+//   onRequest: (config, handler) => {
+//     console.log(`2. onRequest: ${config.url}`);
+//     config.headers = { 'content-type': 'text/text', customHeader2: 'customHeader2', ...config.headers };
+//     handler.next(config);
+
+//   },
+//   onError: (err, handler) => {
+//     console.log(`2. onError: ${err.config.url}`);
+//     handler.next(err);
+//   },
+//   onResponse: (response, handler) => {
+//     console.log(`2. onResponse: ${response.config.url}`);
+//     handler.next(response)
+//   }
+// }, window);
 
 
-// unProxy();
+// unProxy1();
+// unProxy2();
 
 testProxy()
 

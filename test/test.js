@@ -1,25 +1,19 @@
-function testJquery(url) {
+export function testRequest(url) {
     var xhr = new XMLHttpRequest();
     xhr.open('get', url);
-    xhr.send();
+
     xhr.onload = () => {
-        if (xhr.status === 200) {
-            console.log(xhr);
-        }
+        console.log(`origin onload : ${xhr.response}`);
+        xhr.response = 'xhr response has been reset';
     }
+
     xhr.onerror = () => {
-        console.log(xhr.response);
+        console.log(`${url}: xhr error`);
     }
-}
-
-export function testHook() {
-    testJquery('https://aa/');
-}
-
-export function testProxy() {
-    testJquery('https://aa/');
-    testJquery('https://bb/');
-    testJquery(location.href)
+    
+    xhr.onreadystatechange = (...args) => {}
+    xhr.setRequestHeader('header1', 'header1');
+    xhr.send();
 }
 
 

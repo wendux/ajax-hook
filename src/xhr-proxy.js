@@ -153,6 +153,7 @@ function proxyAjax(proxy, win) {
     }
     return true;
   }
+  
 
   var { originXhr, unHook } =  hook({
     onload: preventXhrProxyCallback,
