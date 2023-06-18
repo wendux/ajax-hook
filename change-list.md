@@ -1,5 +1,9 @@
 # Change list
 
+## 2.1.3
+
+- 支持多次拦截请求，修改取消拦截的方式，调用 `proxy` 或 `unHook` 时返回 `unProxy` 或 `unHook` 方法
+
 ## 2.1.2
 
 - 添加可选参数[window]，可以指定iframe的window对象来拦截同源iframe页面内的ajax请求。
