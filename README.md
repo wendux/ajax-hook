@@ -32,7 +32,7 @@ ajax-hook是用于拦截浏览器 XMLHttpRequest 对象的轻量库，它可以�
 一个简单示例：
 
 ```javascript
-import {proxy, unProxy} from "ajax-hook";
+import { proxy } from "ajax-hook";
 proxy({
     //请求发起前进入
     onRequest: (config, handler) => {
@@ -90,7 +90,7 @@ proxy({
 #### 示例
 
 ```javascript
-proxy({
+const { unProxy, originXhr } proxy({
     onRequest: (config, handler) => {
         if (config.url === 'https://aa/') {
             handler.resolve({
@@ -140,6 +140,9 @@ function testJquery(url) {
 testJquery('https://aa/');
 testJquery('https://bb/');
 testJquery(location.href)
+
+// 取消拦截
+unProxy();
 ```
 
 运行后，控制台输出3次 "hi world"。
@@ -170,8 +173,8 @@ Ajax-hook在1.x版本中只提供了一个核心拦截功能的库，在1.x中�
 下面我们看一下如何使用`hook`方法来拦截`XMLHttpRequest`对象：
 
 ```javascript
-import {hook} from "ajax-hook"
-hook({
+import { hook } from "ajax-hook"
+const { unHook, originXhr } = hook({
   //拦截回调
   onreadystatechange:function(xhr,event){
     console.log("onreadystatechange called: %O")
@@ -190,6 +193,9 @@ hook({
     return false
   }
 })
+
+// 取消拦截
+unHook();
 ```
 
 这样拦截就生效了，拦截的全局的`XMLHttpRequest`，所以，无论你使用的是哪种JavaScript http请求库，它们只要最终是使用`XMLHttpRequest`发起的网络请求，那么拦截都会生效。下面我们用jQuery发起一个请求：
@@ -333,10 +339,10 @@ hook({
 显示指定iframe 的 window 对象即可，比如：
 ```javascript
 var iframeWindow = ...;
-proxy({...},iframeWindow)
+const { unProxy } = proxy({...},iframeWindow)
 unProxy(iframeWindow)
 //或
-hook({...},iframeWindow)
+const { unHook } = hook({...},iframeWindow)
 unHook(frameWindow)      
 ```
 完整示例见：[拦截iframe中的请求](https://github.com/wendux/ajax-hook/tree/master/examples/iframe)。
