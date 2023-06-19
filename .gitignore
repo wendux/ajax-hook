@@ -1,5 +1,9 @@
 .idea
-.idea
 .DS_Store
 /node_modules
+/dist
+/test/hook.js
+/test/proxy.js
+
+/test/dist
 

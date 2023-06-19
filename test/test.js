@@ -1,28 +1,19 @@
-import {unHook} from "../index";
+export function testRequest(url) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('get', url);
 
-function testJquery(url) {
-    window['jQuery'].get(url).done(function (d) {
-        console.log(d)
-    }).fail(function (e) {
-        console.log('hi world')
-    })
+    xhr.onload = () => {
+        console.log(`origin onload : ${xhr.response}`);
+        xhr.response = 'xhr response has been reset';
+    }
+
+    xhr.onerror = () => {
+        console.log(`${url}: xhr error`);
+    }
+    
+    xhr.onreadystatechange = (...args) => {}
+    xhr.setRequestHeader('header1', 'header1');
+    xhr.send();
 }
 
-export function testProxy() {
-    testJquery('https://aa/');
-    testJquery('https://bb/');
-    testJquery(location.href)
-}
 
-export function testHook() {
-    $.get().done(function (d) {
-        console.log(d.substr(0, 30) + "...")
-        //use original XMLHttpRequest
-        console.log("unhook")
-        unHook()
-        $.get().done(function (d) {
-            console.log(d.substr(0, 10))
-        })
-
-    })
-}

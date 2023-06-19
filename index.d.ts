@@ -102,10 +102,10 @@ interface Proxy {
   onError?: (err: XhrError, handler: XhrErrorHandler) => void,
 }
 
-export function proxy(proxy: Proxy, win?: Window): XMLHttpRequest;
+export function proxy(proxy: Proxy, win?: Window): { originXhr: XMLHttpRequest, unProxy: () => void };
 
 export function unProxy(win?: Window);
 
-export function hook(hooks: Hooks,win?: Window): XMLHttpRequest;
+export function hook(hooks: Hooks,win?: Window): { originXhr: XMLHttpRequest, unHook: () => void };
 
 export function unHook(win?: Window);

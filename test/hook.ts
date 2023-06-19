@@ -1,29 +1,87 @@
-import {hook} from "../index"
-import {testHook} from './test'
+import { hook } from "../index"
+import { testRequest } from './test'
 
-hook({
+function testHook() {
+    // testXML(location.href);
+    testRequest('https://aa');
+}
+
+const { unHook: unHook1, originXhr: originXhr1 } = hook({
     onreadystatechange: function (xhr) {
-        console.log("onreadystatechange called: %O", xhr)
+        console.log("1. onreadystatechange")
     },
     onload: function (xhr) {
-        console.log("onload called: %O", xhr)
+        console.log("1. onload")
         // xhr.getProxy().responseText='xhr.responseText'
         this.responseText = "hookAjax" + xhr.responseText;
     },
+    onerror: function (xhr) {
+        console.log("1. onerror"); 
+    },
     open: function (arg, xhr) {
-        console.log("open called: method:%s,url:%s,async:%s", arg[0], arg[1], arg[2], xhr)
         //add tag
-        arg[1] += "?hook_tag=1";
+        arg[1] += "&hook_tag=1";
+        console.log("1. open");
 
     },
     send: function (arg, xhr) {
-        console.log("send called: %O", arg[0])
-        xhr.setRequestHeader("_custom_header_", "ajaxhook")
+        console.log("1. send");
+        xhr.setRequestHeader("_custom_header_1", "ajaxhook1");
     },
     setRequestHeader: function (args, xhr) {
-        console.log("setRequestHeader called!", args)
+        console.log("1. setRequestHeader");
+    },
+    response: {
+        getter: () => {
+            return { data: '1 res' }
+        },
+        setter(value, target) {
+            console.log('1. set response');
+            return '1. set response: set response value';
+        },
     }
-})
+});
+
+
+// const { unHook: unHook2, originXhr: originXhr2 } = hook({
+//     onreadystatechange: function (xhr) {
+//         console.log("2. onreadystatechange")
+//     },
+//     onload: function (xhr) {
+//         console.log("2. onload")
+//         // xhr.getProxy().responseText='xhr.responseText'
+//         this.responseText = "hookAjax" + xhr.responseText;
+//     },
+//     onerror: function (xhr) {
+//         console.log("2. onerror");  
+//     },
+//     open: function (arg, xhr) {
+//         //add tag
+//         arg[1] += "?hook_tag=2";
+//         console.log("2. open");
+//     },
+//     send: function (arg, xhr) {
+//         console.log("2. send");
+//         xhr.setRequestHeader("_custom_header_2", "ajaxhook2");
+//     },
+//     setRequestHeader: function (args, xhr) {
+//         console.log("2. setRequestHeader")
+//     },
+//     response: {
+//         getter: () => {
+//             return { data: '2. res' }
+//         },
+//         setter(value, target) {
+//             console.log('2. set response');
+//             return '2. set response';
+//         },
+//     }
+// });
+
+
+// unHook2();
 
 testHook()
+
+
 
