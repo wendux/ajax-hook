@@ -7,10 +7,6 @@
 
 ajax-hook是用于拦截浏览器 XMLHttpRequest 对象的轻量库，它可以在 XMLHttpRequest 对象发起请求之前、收到响应内容之后以及发生错误时获得处理权，通过它你可以提前对请求、响应以及错误进行一些预处理。Ajax-hook具有很好的兼容性，可以在任何支持**ES5**的浏览器上运行，因为它并不依赖 ES6 特性。
 
-## 更新记录
-
-2.1.3已发布，2.x和1.x最大的区别是添加了`proxy`方法且同时支持TypeScript，详请见[change list](./change-list.md) 。
-
 ## 使用
 
 ### 安装
@@ -18,7 +14,7 @@ ajax-hook是用于拦截浏览器 XMLHttpRequest 对象的轻量库，它可以�
 - CDN引入
 
   ```html
-  <script src="https://unpkg.com/ajax-hook@2.1.3/dist/ajaxhook.min.js"></script>
+  <script src="https://unpkg.com/ajax-hook@{版本号}/dist/ajaxhook.min.js"></script>
   ```
 
   引入后会有一个名为"ah"（ajax hook）的全局对象，通过它可以调用ajax-hook的API，如`ah.proxy(hooks)`

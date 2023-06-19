@@ -108,8 +108,11 @@ function proxyAjax(proxy, win) {
 
   function handleResponse(xhr, xhrProxy) {
     var handler = new ResponseHandler(xhr);
+    var responseType = xhrProxy.responseType;
+    var responseData = !responseType || responseType === 'text' || responseType === 'json' ?
+      xhrProxy.responseText : xhrProxy.response;
     var ret = {
-      response: xhrProxy.response || xhrProxy.responseText, //ie9
+      response: responseData, //ie9
       status: xhrProxy.status,
       statusText: xhrProxy.statusText,
       config: xhr.config,
@@ -153,7 +156,7 @@ function proxyAjax(proxy, win) {
     }
     return true;
   }
-  
+
 
   var { originXhr, unHook } =  hook({
     onload: preventXhrProxyCallback,
