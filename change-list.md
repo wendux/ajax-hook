@@ -1,6 +1,6 @@
 # Change list
 
-## 2.1.3
+## 2.1.4
 
 - 支持多次拦截请求，修改取消拦截的方式，调用 `proxy` 或 `unHook` 时返回 `unProxy` 或 `unHook` 方法
 
