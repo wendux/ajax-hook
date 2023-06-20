@@ -65,11 +65,14 @@ proxy({
 - `proxyObject`是一个对象，包含三个可选的钩子`onRequest`、`onResponse`、`onError`，我们可以直接在这三个钩子中对请求进行预处理。
 - `window`：可选参数，默认情况会使用当前窗口的`window`对象，如果要拦截iframe中的请求，可以将`iframe.contentWindow` 传入，注意，只能拦截**同源**的iframe页面（不能跨域）。
 
-返回值：浏览器原生的`XMLHttpRequest`
+返回值：
+`ProxyReturnObject`
 
-#### `unProxy([window])`
+ProxyReturnObject 是一个对象，包含了 `unProxy` 和 `originXhr`
+- `unProxy([window])`：取消拦截；取消后 `XMLHttpRequest` 将不会再被代理，浏览器原生`XMLHttpRequest`会恢复到全局变量空间
+- `originXhr`： 浏览器原生的 `XMLHttpRequest`
 
-- 取消拦截；取消后`XMLHttpRequest`将不会再被代理，浏览器原生`XMLHttpRequest`会恢复到全局变量空间。
+
 
 ### 钩子函数的签名
 
@@ -86,7 +89,7 @@ proxy({
 #### 示例
 
 ```javascript
-const { unProxy, originXhr } proxy({
+const { unProxy, originXhr } = proxy({
     onRequest: (config, handler) => {
         if (config.url === 'https://aa/') {
             handler.resolve({
@@ -158,11 +161,13 @@ Ajax-hook在1.x版本中只提供了一个核心拦截功能的库，在1.x中�
 - `hooks`：钩子对象，里面是XMLHttpRequest对象的回调、方法、属性的钩子函数，钩子函数会在执行`XMLHttpRequest`对象真正的回调、方法、属性访问器前执行。
 - `window`：可选参数，默认情况会使用当前窗口的`window`对象，如果要拦截iframe中的请求，可以将`iframe.contentWindow` 传入，注意，只能拦截**同源**的iframe页面（不能跨域）。
 
-返回值:  浏览器原生的`XMLHttpRequest`。
+返回值：
+`HookReturnObject`
 
-### `unHook([window])`
+HookReturnObject 是一个对象，包含了 `unHook` 和 `originXhr`
+- `unHook([window])`：取消拦截；取消后 `XMLHttpRequest` 将不会再被代理，浏览器原生`XMLHttpRequest` 会恢复到全局变量空间
+- `originXhr`： 浏览器原生的 `XMLHttpRequest`
 
-- 取消拦截；取消后`XMLHttpRequest`将不会再被代理，浏览器原生`XMLHttpRequest`会恢复到全局变量空间
 
 #### 示例
 
