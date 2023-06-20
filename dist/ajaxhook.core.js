@@ -217,14 +217,11 @@ exports.ah = undefined;
 
 var _xhrHook = __webpack_require__(0);
 
-var ah = exports.ah = {
-  hook: _xhrHook.hook,
-  unHook: _xhrHook.unHook
-}; /*
-    * author: wendux
-    * email: 824783146@qq.com
-    * source code: https://github.com/wendux/Ajax-hook
-    */
+var ah = exports.ah = { hook: _xhrHook.hook }; /*
+                                                * author: wendux
+                                                * email: 824783146@qq.com
+                                                * source code: https://github.com/wendux/Ajax-hook
+                                                */
 
 /***/ })
 /******/ ])));

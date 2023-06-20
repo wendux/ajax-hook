@@ -486,12 +486,6 @@ Object.defineProperty(exports, "hook", {
     return _xhrHook.hook;
   }
 });
-Object.defineProperty(exports, "unHook", {
-  enumerable: true,
-  get: function get() {
-    return _xhrHook.unHook;
-  }
-});
 
 var _xhrProxy = __webpack_require__(1);
 
@@ -499,12 +493,6 @@ Object.defineProperty(exports, "proxy", {
   enumerable: true,
   get: function get() {
     return _xhrProxy.proxy;
-  }
-});
-Object.defineProperty(exports, "unProxy", {
-  enumerable: true,
-  get: function get() {
-    return _xhrProxy.unProxy;
   }
 });
 

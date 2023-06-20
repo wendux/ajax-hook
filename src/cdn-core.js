@@ -4,9 +4,6 @@
  * source code: https://github.com/wendux/Ajax-hook
  */
 
-import {hook, unHook} from "./xhr-hook";
+import { hook } from "./xhr-hook";
 
-export var ah = {
-    hook,
-    unHook,
-};
+export var ah = { hook };
