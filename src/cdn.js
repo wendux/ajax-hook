@@ -9,7 +9,5 @@ import { proxy } from "./xhr-proxy";
 // ah(ajax hook)
 export var ah = {
     proxy,
-    unProxy,
     hook,
-    unHook,
 };

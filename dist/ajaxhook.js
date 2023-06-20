@@ -483,9 +483,7 @@ var _xhrProxy = __webpack_require__(1);
 
 var ah = exports.ah = {
   proxy: _xhrProxy.proxy,
-  unProxy: unProxy,
-  hook: _xhrHook.hook,
-  unHook: unHook
+  hook: _xhrHook.hook
 };
 
 /***/ })
