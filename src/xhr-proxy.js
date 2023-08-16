@@ -175,11 +175,29 @@ function proxyAjax(proxy, win) {
       config.async = args[2];
       config.user = args[3];
       config.password = args[4];
-      config.xhr = xhr;
+      Object.defineProperty(config, 'xhr', {
+        get() {
+          return xhr; // xhr wil be set to null after xhr.readyState === XMLHttpRequest.DONE
+        },
+        set() {
+          // READONLY
+        },
+        enumerable: false,
+        configurable: true
+      });
+      // config.xhr = xhr;
       var evName = 'on' + eventReadyStateChange;
       if (!xhr[evName]) {
         xhr[evName] = function () {
-          return stateChangeCallback(xhr, _this);
+          if (config.xhr === this) {
+            var result = stateChangeCallback(this, _this);
+            if (this.readyState === XMLHttpRequest.DONE) {
+              xhr = null; // avoid memory leak
+              delete config.xhr;
+              xhr[evName] = null;
+            }
+            return result;
+          }
         };
       }
 
