@@ -160,7 +160,7 @@ function proxyAjax(proxy, win) {
   }
 
   function stateChangeCallback(xhr, xhrProxy) {
-    var config = xhrProxy ? xhrProxy.config : null;
+    var config = xhr ? xhr.config : null;
     if (config && xhr && config.xhr === xhr) {
       if (xhr.readyState === 4 && xhr.status !== 0) {
         handleResponse(xhr, xhrProxy);
