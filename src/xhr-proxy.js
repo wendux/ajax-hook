@@ -188,6 +188,7 @@ function proxyAjax(proxy, win) {
         },
         set(nv) {
           if (nv === null) xhr = null;
+          return true;
         },
         enumerable: false,
         configurable: true
