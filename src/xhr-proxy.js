@@ -219,7 +219,6 @@ function proxyAjax(proxy, win) {
         var handler = args[1];
         var Gn = function (e) {
           var event = configEvent(e, _this);
-          event.type = e.type;
           event.isTrusted = true;
           handler.call(_this, event);
         };
