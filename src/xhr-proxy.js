@@ -149,10 +149,17 @@ function proxyAjax(proxy, win) {
   }
 
   function stateChangeCallback(xhr, xhrProxy) {
-    if (xhr.readyState === 4 && xhr.status !== 0) {
-      handleResponse(xhr, xhrProxy);
-    } else if (xhr.readyState !== 4) {
-      triggerListener(xhr, eventReadyStateChange);
+    var config = xhrProxy ? xhrProxy.config : null;
+    if (config && xhr && config.xhr === xhr) {
+      if (xhr.readyState === 4 && xhr.status !== 0) {
+        handleResponse(xhr, xhrProxy);
+      } else if (xhr.readyState !== 4) {
+        triggerListener(xhr, eventReadyStateChange);
+      }
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        config.xhr = null;
+        xhr['on' + eventReadyStateChange] = null;
+      }
     }
     return true;
   }
@@ -179,8 +186,8 @@ function proxyAjax(proxy, win) {
         get() {
           return xhr; // xhr wil be set to null after xhr.readyState === XMLHttpRequest.DONE
         },
-        set() {
-          // READONLY
+        set(nv) {
+          if (nv === null) xhr = null;
         },
         enumerable: false,
         configurable: true
@@ -189,15 +196,7 @@ function proxyAjax(proxy, win) {
       var evName = 'on' + eventReadyStateChange;
       if (!xhr[evName]) {
         xhr[evName] = function () {
-          if (config.xhr === this) {
-            var result = stateChangeCallback(this, _this);
-            if (this.readyState === XMLHttpRequest.DONE) {
-              xhr = null; // avoid memory leak
-              delete config.xhr;
-              xhr[evName] = null;
-            }
-            return result;
-          }
+          return stateChangeCallback(this, _this);
         };
       }
 
