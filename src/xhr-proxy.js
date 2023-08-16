@@ -64,11 +64,22 @@ Handler[prototype] = Object.create({
     triggerListener(xhr, eventReadyStateChange);
     triggerListener(xhr, eventLoad);
     triggerListener(xhr, eventLoadEnd);
+    if (xhr.readyState === 4) {
+      if (xhr.config) xhr.config.xhr = null;
+      xhr['on' + eventReadyStateChange] = null;
+      xhr.config = null;
+    }
   },
   reject: function reject(error) {
+    var xhr = this.xhr;
     this.xhrProxy.status = 0;
-    triggerListener(this.xhr, error.type);
-    triggerListener(this.xhr, eventLoadEnd);
+    triggerListener(xhr, error.type);
+    triggerListener(xhr, eventLoadEnd);
+    if (xhr.readyState === 4) {
+      if (xhr.config) xhr.config.xhr = null;
+      xhr['on' + eventReadyStateChange] = null;
+      xhr.config = null;
+    }
   }
 });
 
@@ -156,10 +167,6 @@ function proxyAjax(proxy, win) {
       } else if (xhr.readyState !== 4) {
         triggerListener(xhr, eventReadyStateChange);
       }
-      if (xhr.readyState === XMLHttpRequest.DONE) {
-        config.xhr = null;
-        xhr['on' + eventReadyStateChange] = null;
-      }
     }
     return true;
   }
@@ -184,7 +191,7 @@ function proxyAjax(proxy, win) {
       config.password = args[4];
       Object.defineProperty(config, 'xhr', {
         get() {
-          return xhr; // xhr wil be set to null after xhr.readyState === XMLHttpRequest.DONE
+          return xhr; // xhr wil be set to null after xhr.readyState === XMLHttpRequest.DONE (4)
         },
         set(nv) {
           if (nv === null) xhr = null;
