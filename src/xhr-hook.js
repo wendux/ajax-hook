@@ -20,7 +20,7 @@ export function hook(proxy, win) {
   win = win || window;
   var originXhr = win.XMLHttpRequest;
 
-  win.XMLHttpRequest = function () {
+  var HookXMLHttpRequest = function () {
     // We shouldn't hookAjax XMLHttpRequest.prototype because we can't
     // guarantee that all attributes are on the prototype。
     // Instead, hooking XMLHttpRequest instance can avoid this problem.
@@ -56,6 +56,11 @@ export function hook(proxy, win) {
     }
     this[OriginXhr] = xhr;
   }
+
+  HookXMLHttpRequest.prototype = originXhr.prototype;
+  HookXMLHttpRequest.prototype.constructor = HookXMLHttpRequest;
+
+  win.XMLHttpRequest = HookXMLHttpRequest;
 
   Object.assign(win.XMLHttpRequest, {UNSENT: 0, OPENED: 1, HEADERS_RECEIVED: 2, LOADING: 3, DONE: 4});
 
@@ -113,6 +118,7 @@ export function hook(proxy, win) {
 
   function unHook() {
       win.XMLHttpRequest = originXhr;
+      HookXMLHttpRequest.prototype.constructor = originXhr;
       originXhr = undefined;
   }
 
