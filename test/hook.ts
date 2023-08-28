@@ -2,8 +2,8 @@ import { hook } from "../index"
 import { testRequest } from './test'
 
 function testHook() {
-    // testXML(location.href);
-    testRequest('https://aa');
+    testRequest(location.href);
+    // testRequest('https://aa');
 }
 
 const { unHook: unHook1, originXhr: originXhr1 } = hook({
@@ -41,7 +41,6 @@ const { unHook: unHook1, originXhr: originXhr1 } = hook({
         },
     }
 });
-
 
 // const { unHook: unHook2, originXhr: originXhr2 } = hook({
 //     onreadystatechange: function (xhr) {
