@@ -114,7 +114,9 @@ function hook(proxy, win) {
   win = win || window;
   var originXhr = win.XMLHttpRequest;
 
-  win.XMLHttpRequest = function () {
+  var hooking = true;
+
+  var HookXMLHttpRequest = function HookXMLHttpRequest() {
     // We shouldn't hookAjax XMLHttpRequest.prototype because we can't
     // guarantee that all attributes are on the prototype。
     // Instead, hooking XMLHttpRequest instance can avoid this problem.
@@ -150,14 +152,24 @@ function hook(proxy, win) {
     this[OriginXhr] = xhr;
   };
 
+  HookXMLHttpRequest.prototype = originXhr.prototype;
+  HookXMLHttpRequest.prototype.constructor = HookXMLHttpRequest;
+
+  win.XMLHttpRequest = HookXMLHttpRequest;
+
   Object.assign(win.XMLHttpRequest, { UNSENT: 0, OPENED: 1, HEADERS_RECEIVED: 2, LOADING: 3, DONE: 4 });
 
   // Generate getter for attributes of xhr
   function getterFactory(attr) {
     return function () {
-      var v = this.hasOwnProperty(attr + "_") ? this[attr + "_"] : this[OriginXhr][attr];
-      var attrGetterHook = (proxy[attr] || {})["getter"];
-      return attrGetterHook && attrGetterHook(v, this) || v;
+      var originValue = this[OriginXhr][attr];
+      if (hooking) {
+        var v = this.hasOwnProperty(attr + "_") ? this[attr + "_"] : originValue;
+        var attrGetterHook = (proxy[attr] || {})["getter"];
+        return attrGetterHook && attrGetterHook(v, this) || v;
+      } else {
+        return originValue;
+      }
     };
   }
 
@@ -166,25 +178,29 @@ function hook(proxy, win) {
   function setterFactory(attr) {
     return function (v) {
       var xhr = this[OriginXhr];
-      var that = this;
-      var hook = proxy[attr];
-      // hookAjax  event callbacks such as `onload`、`onreadystatechange`...
-      if (attr.substring(0, 2) === 'on') {
-        that[attr + "_"] = v;
-        xhr[attr] = function (e) {
-          e = configEvent(e, that);
-          var ret = proxy[attr] && proxy[attr].call(that, xhr, e);
-          ret || v.call(that, e);
-        };
+      if (hooking) {
+        var that = this;
+        var hook = proxy[attr];
+        // hookAjax  event callbacks such as `onload`、`onreadystatechange`...
+        if (attr.substring(0, 2) === 'on') {
+          that[attr + "_"] = v;
+          xhr[attr] = function (e) {
+            e = configEvent(e, that);
+            var ret = proxy[attr] && proxy[attr].call(that, xhr, e);
+            ret || v.call(that, e);
+          };
+        } else {
+          //If the attribute isn't writable, generate proxy attribute
+          var attrSetterHook = (hook || {})["setter"];
+          v = attrSetterHook && attrSetterHook(v, that) || v;
+          this[attr + "_"] = v;
+          try {
+            // Not all attributes of xhr are writable(setter may undefined).
+            xhr[attr] = v;
+          } catch (e) {}
+        }
       } else {
-        //If the attribute isn't writable, generate proxy attribute
-        var attrSetterHook = (hook || {})["setter"];
-        v = attrSetterHook && attrSetterHook(v, that) || v;
-        this[attr + "_"] = v;
-        try {
-          // Not all attributes of xhr are writable(setter may undefined).
-          xhr[attr] = v;
-        } catch (e) {}
+        xhr[attr] = v;
       }
     };
   }
@@ -193,7 +209,7 @@ function hook(proxy, win) {
   function hookFunction(fun) {
     return function () {
       var args = [].slice.call(arguments);
-      if (proxy[fun]) {
+      if (proxy[fun] && hooking) {
         var ret = proxy[fun].call(this, args, this[OriginXhr]);
         // If the proxy return value exists, return it directly,
         // otherwise call the function of xhr.
@@ -204,8 +220,12 @@ function hook(proxy, win) {
   }
 
   function unHook() {
-    win.XMLHttpRequest = originXhr;
-    originXhr = undefined;
+    hooking = false;
+    if (win.XMLHttpRequest === HookXMLHttpRequest) {
+      win.XMLHttpRequest = originXhr;
+      HookXMLHttpRequest.prototype.constructor = originXhr;
+      originXhr = undefined;
+    }
   }
 
   // Return the real XMLHttpRequest and unHook func
