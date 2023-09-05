@@ -109,9 +109,6 @@ function proxyAjax(proxy, win) {
   function handleResponse(xhr, xhrProxy) {
     var handler = new ResponseHandler(xhr);
     var getResponseData = function () {
-      // object getter is part of ES5
-      // getter to avoid uncessary processing. only proceed if response.response is called.
-      // property 'response' is enumerable such that JSON.stringify(response) contains response
       var responseType = xhrProxy.responseType;
       if (!responseType || responseType === 'text') {
         return xhrProxy.responseText;
@@ -121,25 +118,17 @@ function proxyAjax(proxy, win) {
       // json - W3C standard - xhrProxy.response = JSON object; responseText is unobtainable
       // For details, see https://github.com/wendux/ajax-hook/issues/117
       // IE 9, 10 & 11 - only responseText
-      if (responseType === 'json' && typeof JSON === 'object' && ((navigator || 0).userAgent || '').indexOf('Trident') !== -1) {
-        return JSON.parse(xhrProxy.responseText);
+      if (responseType === 'json' && xhrProxy.readyState === 4 && xhrProxy.status !== 0 && !xhrProxy.response) {
+        try {
+          return JSON.parse(xhrProxy.responseText);
+        } catch (e) {
+          console.warn(e);
+        }
       }
       return xhrProxy.response;
     }; //ie9
-    var responseData;
     var ret = {
-      get response() {
-        if (getResponseData) {
-          responseData = getResponseData();
-          getResponseData = null;
-        }
-        return responseData;
-      },
-      set response(nv) {
-        getResponseData = null;
-        responseData = nv;
-        return true;
-      },
+      response: getResponseData(),
       status: xhrProxy.status,
       statusText: xhrProxy.statusText,
       config: xhr.config,
