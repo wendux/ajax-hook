@@ -30,17 +30,23 @@ ajax-hook是用于拦截浏览器 XMLHttpRequest 对象的轻量库，它可以�
 ```javascript
 import { proxy } from "ajax-hook";
 proxy({
-    //请求发起前进入
+    // 基础参数配置时（xhr.open的阶段）进入，回传false表示不监听不阻断
+    onFilter: (config) => {
+        if (config.url.startsWith('https://www.github.com/')) {
+            return false; // 回传 false 表示整个XHR実例后续(onRequest, onResponse之類）不再监视直接跳过
+        }
+    },
+    // 请求发起前（xhr.send的阶段）进入
     onRequest: (config, handler) => {
         console.log(config.url)
         handler.next(config);
     },
-    //请求发生错误时进入，比如超时；注意，不包括http状态码错误，如404仍然会认为请求成功
+    // 请求发生错误时进入，比如超时；注意，不包括http状态码错误，如404仍然会认为请求成功
     onError: (err, handler) => {
         console.log(err.type)
         handler.next(err)
     },
-    //请求成功后进入
+    // 请求成功后进入
     onResponse: (response, handler) => {
         console.log(response.response)
         handler.next(response)
@@ -48,7 +54,7 @@ proxy({
 })
 ```
 
-现在，我们便拦截了浏览器中通过`XMLHttpRequest`发起的所有网络请求！在请求发起前，会先进入`onRequest`钩子，调用`handler.next(config)` 请求继续，如果请求成功，则会进入`onResponse`钩子，如果请求发生错误，则会进入`onError` 。我们可以更改回调钩子的第一个参数来修改修改数据。
+现在，我们便拦截了浏览器中通过`XMLHttpRequest`发起的所有网络请求！在参数配置时会进入`onFilter`钩子以过滤需要处理的请求，在请求发起前，会先进入`onRequest`钩子，调用`handler.next(config)` 请求继续，如果请求成功，则会进入`onResponse`钩子，如果请求发生错误，则会进入`onError` 。我们可以更改回调钩子的第一个参数来修改修改数据。
 
 [点击查看更多项目示例](https://github.com/wendux/ajax-hook/tree/master/examples)。
 
@@ -62,7 +68,7 @@ proxy({
 
 参数：
 
-- `proxyObject`是一个对象，包含三个可选的钩子`onRequest`、`onResponse`、`onError`，我们可以直接在这三个钩子中对请求进行预处理。
+- `proxyObject`是一个对象，包含四个可选的钩子`onFilter`、`onRequest`、`onResponse`、`onError`，我们可以直接在这四个钩子中对请求进行预处理。
 - `window`：可选参数，默认情况会使用当前窗口的`window`对象，如果要拦截iframe中的请求，可以将`iframe.contentWindow` 传入，注意，只能拦截**同源**的iframe页面（不能跨域）。
 
 返回值：
@@ -90,6 +96,11 @@ ProxyReturnObject 是一个对象，包含了 `unProxy` 和 `originXhr`
 
 ```javascript
 const { unProxy, originXhr } = proxy({
+    onFilter: (config) => {
+        if (config.url === 'https://google.com/') {
+            return false; // 回传 false 表示整个XHR実例后续(onRequest, onResponse之類）不再监视直接跳过
+        }
+    },
     onRequest: (config, handler) => {
         if (config.url === 'https://aa/') {
             handler.resolve({
@@ -135,7 +146,7 @@ function testJquery(url) {
     })
 }
 
-//测试
+// 测试
 testJquery('https://aa/');
 testJquery('https://bb/');
 testJquery(location.href)
@@ -176,18 +187,18 @@ HookReturnObject 是一个对象，包含了 `unHook` 和 `originXhr`
 ```javascript
 import { hook } from "ajax-hook"
 const { unHook, originXhr } = hook({
-  //拦截回调
+  // 拦截回调
   onreadystatechange:function(xhr,event){
     console.log("onreadystatechange called: %O")
-    //返回false表示不阻断，拦截函数执行完后会接着执行真正的xhr.onreadystatechange回调.
-    //返回true则表示阻断，拦截函数执行完后将不会执行xhr.onreadystatechange. 
+    // 返回false表示不阻断，拦截函数执行完后会接着执行真正的xhr.onreadystatechange回调.
+    // 返回true则表示阻断，拦截函数执行完后将不会执行xhr.onreadystatechange. 
     return false
   },
   onload:function(xhr,event){
     console.log("onload called")
     return false
   },
-  //拦截方法
+  // 拦截方法
   open:function(args,xhr){
     console.log("open called: method:%s,url:%s,async:%s",args[0],args[1],args[2])
     //拦截方法的返回值含义同拦截回调的返回值
@@ -236,7 +247,7 @@ hook({
     // this 为代理xhr对象
     // 原生xhr对象扩展了一个`getProxy()`方法，调用它可以获取代理xhr对象
     this==xhr.getProxy() //true
-    //可以通过代理xhr对象的`xhr`属性获取原生xhr对象
+    // 可以通过代理xhr对象的`xhr`属性获取原生xhr对象
     this.xhr==xhr //true
     console.log("onload called")
     return false
@@ -264,11 +275,11 @@ hook({
 
   ```javascript
   hook(
-      //需要拦截的属性名
+      // 需要拦截的属性名
       timeout: {
-          //拦截写操作
+          // 拦截写操作
           setter: function (v, xhr) {
-              //超时最短为1s，返回值为最终值。
+              // 超时最短为1s，返回值为最终值。
               return Math.max(v, 1000);
           }
       }
@@ -304,13 +315,13 @@ hook({
         var contentType=xhr.getResponseHeader("content-type")||"";
         if(contentType.toLocaleLowerCase().indexOf("json")!==-1){
             v=JSON.parse(v);
-            //不能在属性的getter钩子中再读取该属性，这会导致循环调用
-            //v=JSON.parse(xhr.responseText);
+            // 不能在属性的getter钩子中再读取该属性，这会导致循环调用
+            // v=JSON.parse(xhr.responseText);
         }
         return v;
     }
     
-    //因为无法确定上层使用的是responseText还是response属性，为了保险起见，两个属性都拦截一下
+    // 因为无法确定上层使用的是responseText还是response属性，为了保险起见，两个属性都拦截一下
     hook(
         responseText: {
             getter: tryParseJson2
@@ -342,7 +353,7 @@ hook({
 var iframeWindow = ...;
 const { unProxy } = proxy({...},iframeWindow)
 unProxy(iframeWindow)
-//或
+// 或
 const { unHook } = hook({...},iframeWindow)
 unHook(frameWindow)      
 ```

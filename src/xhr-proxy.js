@@ -102,7 +102,7 @@ var ErrorHandler = makeHandler(function (error) {
 });
 
 function proxyAjax(proxy, win) {
-  var onConfig = proxy.onConfig,
+  var onFilter = proxy.onFilter,
     onRequest = null,
     onRequest_ = proxy.onRequest,
     onResponse = proxy.onResponse,
@@ -190,8 +190,8 @@ function proxyAjax(proxy, win) {
       //
       // 如果没有请求拦截器，则不用阻断xhr.open调用
       onRequest = onRequest_;
-      if (onConfig) {
-        if (onConfig(config, this) === false) onRequest = null;
+      if (onFilter) {
+        if (onFilter(config) === false) onRequest = null;
       }
       if (onRequest) return true;
     },
