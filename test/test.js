@@ -3,8 +3,8 @@ export function testRequest(url) {
     xhr.open('get', url);
 
     xhr.onload = () => {
-        console.log(`origin onload : ${xhr.response}`);
         xhr.response = 'xhr response has been reset';
+        console.log('origin onload :', xhr.response);
     }
 
     xhr.onerror = () => {
