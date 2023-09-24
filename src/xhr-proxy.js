@@ -106,13 +106,31 @@ function proxyAjax(proxy, win) {
     onResponse = proxy.onResponse,
     onError = proxy.onError;
 
+  function getResponseData(xhrProxy) {
+    var responseType = xhrProxy.responseType;
+    if (!responseType || responseType === 'text') {
+      return xhrProxy.responseText;
+    }
+    // reference: https://shanabrian.com/web/html-css-js-technics/js-ie10-ie11-xhr-json-string.php
+    // reference: https://github.com/axios/axios/issues/2390
+    // json - W3C standard - xhrProxy.response = JSON object; responseText is unobtainable
+    // For details, see https://github.com/wendux/ajax-hook/issues/117
+    // IE 9, 10 & 11 - only responseText
+    var response = xhrProxy.response;
+    if (responseType === 'json' && !response) {
+      try {
+        return JSON.parse(xhrProxy.responseText);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+    return response;
+  };
+
   function handleResponse(xhr, xhrProxy) {
     var handler = new ResponseHandler(xhr);
-    var responseType = xhrProxy.responseType;
-    var responseData = !responseType || responseType === 'text' || responseType === 'json' ?
-      xhrProxy.responseText : xhrProxy.response;
     var ret = {
-      response: responseData, //ie9
+      response: getResponseData(xhrProxy),
       status: xhrProxy.status,
       statusText: xhrProxy.statusText,
       config: xhr.config,
