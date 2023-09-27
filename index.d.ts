@@ -97,6 +97,7 @@ interface XhrErrorHandler extends XhrHandler {
 }
 
 interface Proxy {
+  onConfig?: (config: XhrRequestConfig, xhrProxy: Hooks) => boolean | void,
   onRequest?: (config: XhrRequestConfig, handler: XhrRequestHandler) => void,
   onResponse?: (response: XhrResponse, handler: XhrResponseHandler) => void,
   onError?: (err: XhrError, handler: XhrErrorHandler) => void,
