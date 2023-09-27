@@ -27,7 +27,7 @@ function trim(str) {
 }
 
 function getEventTarget(xhr) {
-  return xhr.watcher || (xhr.watcher = document.createElement('a'));
+  return xhr.watcher || (xhr.watcher = typeof document.createDocumentFragment === 'function' ? document.createDocumentFragment() : document.createElement('a'));
 }
 
 function triggerListener(xhr, name) {
@@ -175,6 +175,9 @@ function proxyAjax(proxy, win) {
     return true;
   }
 
+  var eventListenerFnMap = typeof WeakMap === 'function' ? function (_this) {
+    return _this.eventListenerFnMap || (_this.eventListenerFnMap = new WeakMap());
+  } : null;
 
   var { originXhr, unHook } =  hook({
     onload: preventXhrProxyCallback,
@@ -228,16 +231,35 @@ function proxyAjax(proxy, win) {
       if (onRequest) return true;
     },
     addEventListener: function (args, xhr) {
+      // args = (type:string , listener: EventListener, opt: any?)
       var _this = this;
       if (events.indexOf(args[0]) !== -1) {
         var handler = args[1];
-        getEventTarget(xhr).addEventListener(args[0], function (e) {
+        var Gn = function (e) {
           var event = configEvent(e, _this);
-          event.type = args[0];
           event.isTrusted = true;
           handler.call(_this, event);
-        });
+        };
+        if (eventListenerFnMap) {
+          var map = eventListenerFnMap(_this);
+          map.set(handler, Gn);
+        }
+        getEventTarget(xhr).addEventListener(args[0], Gn, false);
         return true;
+      }
+    },
+    removeEventListener: function (args, xhr) {
+      // args = (type:string , listener: EventListener, opt: any?)
+      if (events.indexOf(args[0]) !== -1) {
+        var handler = args[1];
+        if (eventListenerFnMap) {
+          var map = eventListenerFnMap(this);
+          var Gn = map.get(handler);
+          if (Gn) {
+            getEventTarget(xhr).removeEventListener(args[0], Gn, false);
+            return true;
+          }
+        }
       }
     },
     getAllResponseHeaders: function (_, xhr) {
