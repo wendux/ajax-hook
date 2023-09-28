@@ -64,11 +64,22 @@ Handler[prototype] = Object.create({
     triggerListener(xhr, eventReadyStateChange);
     triggerListener(xhr, eventLoad);
     triggerListener(xhr, eventLoadEnd);
+    if (xhr.readyState === 4) {
+      if (xhr.config) xhr.config.xhr = null;
+      xhr['on' + eventReadyStateChange] = null;
+      xhr.config = null;
+    }
   },
   reject: function reject(error) {
+    var xhr = this.xhr;
     this.xhrProxy.status = 0;
-    triggerListener(this.xhr, error.type);
-    triggerListener(this.xhr, eventLoadEnd);
+    triggerListener(xhr, error.type);
+    triggerListener(xhr, eventLoadEnd);
+    if (xhr.readyState === 4) {
+      if (xhr.config) xhr.config.xhr = null;
+      xhr['on' + eventReadyStateChange] = null;
+      xhr.config = null;
+    }
   }
 });
 
@@ -167,10 +178,13 @@ function proxyAjax(proxy, win) {
   }
 
   function stateChangeCallback(xhr, xhrProxy) {
-    if (xhr.readyState === 4 && xhr.status !== 0) {
-      handleResponse(xhr, xhrProxy);
-    } else if (xhr.readyState !== 4) {
-      triggerListener(xhr, eventReadyStateChange);
+    var config = xhr ? xhr.config : null;
+    if (config && xhr && config.xhr === xhr) {
+      if (xhr.readyState === 4 && xhr.status !== 0) {
+        handleResponse(xhr, xhrProxy);
+      } else if (xhr.readyState !== 4) {
+        triggerListener(xhr, eventReadyStateChange);
+      }
     }
     return true;
   }
@@ -193,11 +207,22 @@ function proxyAjax(proxy, win) {
       config.async = args[2];
       config.user = args[3];
       config.password = args[4];
-      config.xhr = xhr;
+      Object.defineProperty(config, 'xhr', {
+        get() {
+          return xhr; // xhr wil be set to null after xhr.readyState === XMLHttpRequest.DONE (4)
+        },
+        set(nv) {
+          if (nv === null) xhr = null;
+          return true;
+        },
+        enumerable: false,
+        configurable: true
+      });
+      // config.xhr = xhr;
       var evName = 'on' + eventReadyStateChange;
       if (!xhr[evName]) {
         xhr[evName] = function () {
-          return stateChangeCallback(xhr, _this);
+          return stateChangeCallback(this, _this);
         };
       }
 
